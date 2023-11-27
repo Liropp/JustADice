@@ -119,7 +119,7 @@ public class PlayerAttack : MonoBehaviour
                 // Check if the object is an Enemy
                 if (hitObject.CompareTag("Enemy"))
                 {
-                    Debug.Log("enemy around");
+                    //Debug.Log("enemy around");
                     enemyAround = true;
                 }
             }
@@ -134,7 +134,7 @@ public class PlayerAttack : MonoBehaviour
                 // Check if the object is an Enemy
                 if (hitObject.CompareTag("Enemy"))
                 {
-                    Debug.Log("enemy around");
+                    //Debug.Log("enemy around");
                     enemyAround = true;
                 }
             }
@@ -149,7 +149,7 @@ public class PlayerAttack : MonoBehaviour
                 // Check if the object is an Enemy
                 if (hitObject.CompareTag("Enemy"))
                 {
-                    Debug.Log("enemy around");
+                    //Debug.Log("enemy around");
                     enemyAround = true;
                 }
             }
