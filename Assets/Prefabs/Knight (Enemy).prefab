@@ -313,9 +313,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 324301538203200814}
+  maxHP: 100
+  poisonDamage: 15
+  maxPoisonDuration: 5
+  fill: {fileID: 324301536870995981}
+  NormalColor: {r: 1, g: 0, b: 0, a: 1}
+  PoisonedColor: {r: 0.025752783, g: 1, b: 0, a: 1}
   _canvas: {fileID: 324301537270680764}
   cameraDir: {fileID: 0}
-  maxHP: 100
   damage: 20
   attackCooldown: 1
   canAttack: 0

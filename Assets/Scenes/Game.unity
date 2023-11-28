@@ -22731,6 +22731,11 @@ PrefabInstance:
       objectReference: {fileID: 1089626346}
     - target: {fileID: 623963283201840363, guid: 2ab5a472506ed7644ab1ec350b259b3e,
         type: 3}
+      propertyPath: maxHP
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 623963283201840363, guid: 2ab5a472506ed7644ab1ec350b259b3e,
+        type: 3}
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 1675523935}

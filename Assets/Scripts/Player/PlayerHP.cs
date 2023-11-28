@@ -8,7 +8,7 @@ public class PlayerHP : MonoBehaviour
     // Ref
     [SerializeField] private Slider healthBar;
     
-    [SerializeField] [Range(1,300)] private float maxHP;
+    [SerializeField] [Range(1,1000)] private float maxHP;
     private float currHP;
 
     private void Awake()

@@ -6,11 +6,23 @@ using UnityEngine.UI;
 [RequireComponent(typeof(EnemyBase))]
 public class EnemyStats : MonoBehaviour
 {
-    [Header("Health Points")] [SerializeField] private Slider healthBar;
+    [Header("Health Points")]
+    [SerializeField] private Slider healthBar;
     [SerializeField][Range(1, 300)] private float maxHP;
     private float currHP;
 
-    [Header("UI")][SerializeField] private Canvas _canvas;
+    [Header("Malus")]
+    [SerializeField] int poisonDamage;
+    [HideInInspector] bool isPoisoned;
+    [SerializeField] int maxPoisonDuration;
+    [SerializeField] Image fill;
+    [SerializeField] Color NormalColor;
+    [SerializeField] Color PoisonedColor;
+    int poisonDuration;
+    int curPoisonDuration;
+
+    [Header("UI")]
+    [SerializeField] private Canvas _canvas;
     [SerializeField] private Transform cameraDir;
 
     private EnemyBase enemyBase;
@@ -35,6 +47,11 @@ public class EnemyStats : MonoBehaviour
 
         //Ref
         enemyBase = gameObject.GetComponent<EnemyBase>();
+
+        // Set
+        poisonDuration = 0;
+        curPoisonDuration = 0;
+        fill.color = NormalColor;
     }
 
     private void Update()
@@ -56,6 +73,8 @@ public class EnemyStats : MonoBehaviour
                 timer = 0;
             }
         }
+
+        PoisonEffect();
     }
 
     /// <summary>
@@ -122,9 +141,13 @@ public class EnemyStats : MonoBehaviour
     /// player call this give damage to enemies
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool _isPoisoned)
     {
+        // take or not, poison damage
+        isPoisoned = _isPoisoned;
+
         currHP -= damage;
+        Debug.Log(currHP);
         RefreshHealthBar();
 
         // if the enemy have 0 or less HP, he is dead
@@ -140,6 +163,41 @@ public class EnemyStats : MonoBehaviour
     void Dead()
     {
         Destroy(this.gameObject);
+    }
+
+    /// <summary>
+    /// Take poison damage each turn
+    /// </summary>
+    void PoisonEffect()
+    {
+        // If he is poisoned
+        if (enemyBase.GetcanMove() && isPoisoned)
+        {
+            fill.color = PoisonedColor;
+
+            if (curPoisonDuration == poisonDuration)
+            {
+                TakeDamage(poisonDamage, true);
+
+                curPoisonDuration++;
+                Debug.Log("Enemy take poison damage");
+
+                // ">", because we don't want to count the first damage as a turn
+                if (curPoisonDuration > maxPoisonDuration)
+                {
+                    isPoisoned = false;
+                    poisonDuration = 0;
+                    curPoisonDuration = 0;
+                    fill.color = NormalColor;
+                    Debug.Log("Enemy is'nt poisoned anymore");
+                }
+            }
+        }
+        else if (!enemyBase.GetcanMove())
+        {
+
+            poisonDuration = curPoisonDuration;
+        }
     }
 
     /// <summary>

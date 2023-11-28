@@ -11,6 +11,7 @@ public class PlayerAttack : MonoBehaviour
     private bool canAttack = false;
     // Damage amount
     private int damage = 20;
+    private bool _isPoisoned = false;
     // Attack Btn
     [SerializeField] GameObject attackBtn;
     //Ref
@@ -66,7 +67,7 @@ public class PlayerAttack : MonoBehaviour
                 if (dist <= 1)
                 {
                     //Debug.Log(hitObject.name + " hit");
-                    hitObject.GetComponent<EnemyStats>().TakeDamage(damage);
+                    hitObject.GetComponent<EnemyStats>().TakeDamage(damage, _isPoisoned);
                     attackBtn.SetActive(true);
 
                     // End turn
@@ -184,31 +185,37 @@ public class PlayerAttack : MonoBehaviour
                 //Debug.Log("Feuille tranchante");
                 attackBtn.GetComponent<Image>().color = Color.green;
                 damage = spellGreen.damage;
+                _isPoisoned = spellGreen._isPoisoned;
                 break;
             case "Black":
                 //Debug.Log("Trou noir");
                 attackBtn.GetComponent<Image>().color = Color.black;
                 damage = spellBlack.damage;
+                _isPoisoned = spellBlack._isPoisoned;
                 break;
             case "Pink":
                 //Debug.Log("Charme");
                 attackBtn.GetComponent<Image>().color = Color.magenta;
                 damage = spellPink.damage;
+                _isPoisoned = spellPink._isPoisoned;
                 break;
             case "Yellow":
                 //Debug.Log("Ultime");
                 attackBtn.GetComponent<Image>().color = Color.yellow;
                 damage = spellYellow.damage;
+                _isPoisoned = spellYellow._isPoisoned;
                 break;
             case "Red":
                 //Debug.Log("Vol de vie");
                 attackBtn.GetComponent<Image>().color = Color.red;
                 damage = spellRed.damage;
+                _isPoisoned = spellRed._isPoisoned;
                 break;
             case "Blue":
                 //Debug.Log("Recupération de mana");
                 attackBtn.GetComponent<Image>().color = Color.blue;
                 damage = spellBlue.damage;
+                _isPoisoned = spellBlue._isPoisoned;
                 break;
         }
     }
