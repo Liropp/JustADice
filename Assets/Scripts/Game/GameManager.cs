@@ -67,9 +67,13 @@ public class GameManager : MonoBehaviour
             else if(pawns[i].gameObject == null)
             {
                 // if a pawn is killed, we remove him from the list to avoid error.
-
                 pawns.Remove(pawns[i].gameObject);
                 isEnemyTurn = false;
+
+                if (curIndexTurn >= pawns.Count)
+                {
+                    curIndexTurn = 0;
+                }
             }
         }
 
@@ -93,7 +97,7 @@ public class GameManager : MonoBehaviour
         curIndexTurn++;
 
         // if curIndexTurn is at the end of the list, return to 0
-        if(curIndexTurn >= pawns.Count)
+        if (curIndexTurn >= pawns.Count)
         {
             curIndexTurn = 0;
         }

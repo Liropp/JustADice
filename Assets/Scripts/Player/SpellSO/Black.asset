@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86bd75a6085c6ea448609f4043f0134d, type: 3}
   m_Name: Black
   m_EditorClassIdentifier: 
-  damage: 20
+  damage: 0
   _isPoisoned: 0
+  isDistantAttack: 0
+  canBreakGround: 1
+  description: Destroy attack // med cooldown

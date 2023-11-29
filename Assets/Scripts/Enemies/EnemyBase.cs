@@ -11,7 +11,7 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] LayerMask whatIsObstacle;
 
     [Header("Movement Settings")]
-    [SerializeField] private float moveCooldown;
+    [SerializeField] private float turnCooldown;
     [SerializeField] Transform target;
     private float timer = 0;
 
@@ -29,6 +29,8 @@ public class EnemyBase : MonoBehaviour
     // If it's his turn, he can make a move
     public bool canMove = false;
 
+    private Rigidbody rb;
+
     void Awake()
     {
         // Set variables
@@ -37,22 +39,35 @@ public class EnemyBase : MonoBehaviour
         needToMove = 0;
         timer = 0;
         enemyStats = gameObject.GetComponent<EnemyStats>();
+        rb = gameObject.GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-        // Start timer, when it's his turn
-        if (canMove)
+        //Debug.Log(timer + " " + gameObject.name);
+
+        // If the enemy is'nt falling in a hole
+        if (rb.velocity.y >= 0)
         {
-            timer += Time.deltaTime;
-            //Debug.Log(timer+" "+gameObject.name);
+            // Start timer, when it's his turn
+            if (canMove)
+            {
+                timer += Time.deltaTime;
+
+                if (timer >= turnCooldown)
+                {
+                    CheckDir();
+                }
+            }
+            else
+            {
+                timer = 0;
+            }
         }
-
-        if (timer >= moveCooldown && canMove)
+        else
         {
-            CheckDir();
-
-            timer = 0;
+            Destroy(this.gameObject,1f);
+            //Debug.Log("is falling");
         }
     }
 
@@ -205,7 +220,8 @@ public class EnemyBase : MonoBehaviour
 
         #endregion
 
-        // if canMove is < 4, this mean the AI is next to the player and don't need to move
+        // if needToMove is < 4, this mean the AI is next to the player and don't need to move
+        // if needToMove is >= 4, he need to move towards the player
         if (needToMove >= 4)
         {
             //Debug.Log("no player around");

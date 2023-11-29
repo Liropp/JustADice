@@ -7,5 +7,7 @@ public class Spell : ScriptableObject
 {
     public int damage = 20;
     public bool _isPoisoned = false;
+    public bool isDistantAttack = false;
+    public bool canBreakGround = false;
     public string description;
 }

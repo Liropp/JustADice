@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 5
   _isPoisoned: 1
-  description: Poison attack
+  isDistantAttack: 0
+  description: Poison attack // med cooldown

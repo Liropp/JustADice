@@ -25,6 +25,8 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private Spell spellRed;
     [SerializeField] private Spell spellBlue;
     private bool enemyAround = false;
+    private bool isDistantAttack = false;
+    private bool canBreakGround = false;
 
     private void Awake()
     {
@@ -59,12 +61,12 @@ public class PlayerAttack : MonoBehaviour
             GameObject hitObject = hit.collider.gameObject;
 
             // Check if the object is an enemy and if he next to player, in order to give him damage
-            if (hitObject.CompareTag("Enemy"))
+            if (hitObject.CompareTag("Enemy") && !canBreakGround)
             {
                 float dist = Mathf.Round(Vector3.Distance(hitObject.transform.position, transform.position));
                 //Debug.Log(dist);
 
-                if (dist <= 1)
+                if (dist <= 1 || isDistantAttack)
                 {
                     //Debug.Log(hitObject.name + " hit");
                     hitObject.GetComponent<EnemyStats>().TakeDamage(damage, _isPoisoned);
@@ -75,6 +77,16 @@ public class PlayerAttack : MonoBehaviour
 
                     canAttack = false;
                 }
+            }
+            else if(hitObject.layer == 3 && canBreakGround)
+            {
+                hitObject.SetActive(false);
+                attackBtn.SetActive(true);
+
+                // End turn
+                playerController.SetcanMove(false);
+
+                canAttack = false;
             }
         }
     }
@@ -167,7 +179,7 @@ public class PlayerAttack : MonoBehaviour
     public void Attack()
     {
         // only if there is an enemy next to player
-        if (enemyAround)
+        if (enemyAround || isDistantAttack || canBreakGround)
         {
             canAttack = true;
             attackBtn.SetActive(false);
@@ -185,37 +197,45 @@ public class PlayerAttack : MonoBehaviour
                 //Debug.Log("Feuille tranchante");
                 attackBtn.GetComponent<Image>().color = Color.green;
                 damage = spellGreen.damage;
-                _isPoisoned = spellGreen._isPoisoned;
+                isDistantAttack = spellGreen.isDistantAttack;
+                canBreakGround = spellGreen.canBreakGround;
                 break;
             case "Black":
                 //Debug.Log("Trou noir");
                 attackBtn.GetComponent<Image>().color = Color.black;
                 damage = spellBlack.damage;
-                _isPoisoned = spellBlack._isPoisoned;
+                isDistantAttack = spellBlack.isDistantAttack;
+                canBreakGround = spellBlack.canBreakGround;
                 break;
             case "Pink":
                 //Debug.Log("Charme");
                 attackBtn.GetComponent<Image>().color = Color.magenta;
                 damage = spellPink.damage;
                 _isPoisoned = spellPink._isPoisoned;
+                isDistantAttack = spellPink.isDistantAttack;
+                canBreakGround = spellPink.canBreakGround;
                 break;
             case "Yellow":
                 //Debug.Log("Ultime");
                 attackBtn.GetComponent<Image>().color = Color.yellow;
                 damage = spellYellow.damage;
                 _isPoisoned = spellYellow._isPoisoned;
+                isDistantAttack = spellYellow.isDistantAttack;
+                canBreakGround = spellYellow.canBreakGround;
                 break;
             case "Red":
                 //Debug.Log("Vol de vie");
                 attackBtn.GetComponent<Image>().color = Color.red;
                 damage = spellRed.damage;
-                _isPoisoned = spellRed._isPoisoned;
+                isDistantAttack = spellRed.isDistantAttack;
+                canBreakGround = spellRed.canBreakGround;
                 break;
             case "Blue":
                 //Debug.Log("Recupération de mana");
                 attackBtn.GetComponent<Image>().color = Color.blue;
                 damage = spellBlue.damage;
-                _isPoisoned = spellBlue._isPoisoned;
+                isDistantAttack = spellBlue.isDistantAttack;
+                canBreakGround = spellBlue.canBreakGround;
                 break;
         }
     }

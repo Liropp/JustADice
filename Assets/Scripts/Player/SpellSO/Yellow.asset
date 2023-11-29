@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 15
   _isPoisoned: 0
+  isDistantAttack: 1
+  description: Distant attack // no cooldown

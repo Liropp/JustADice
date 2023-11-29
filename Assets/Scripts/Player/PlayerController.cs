@@ -27,6 +27,15 @@ public class PlayerController : MonoBehaviour
         playerMotor = gameObject.GetComponent<PlayerMotor>();
     }
 
+    private void Update()
+    {
+        if (transform.position.y < 0)
+        {
+            gameObject.SetActive(false);
+            //Debug.Log("is falling");
+        }
+    }
+
     /// <summary>
     /// move the dice forward
     /// </summary>
@@ -160,15 +169,18 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Move(Vector3 moveDir, Vector3 rotDir)
     {
-        // My turn ?
-        if (canMove)
+        if (transform.position.y >= 0)
         {
-            // Move
-            playerMotor.Move(moveDir);
+            // My turn ?
+            if (canMove)
+            {
+                // Move
+                playerMotor.Move(moveDir);
 
-            // Rotate
-            Quaternion end = Quaternion.AngleAxis(90f, rotDir) * playerGFX.transform.rotation;
-            playerMotor.Rotate(end);
+                // Rotate
+                Quaternion end = Quaternion.AngleAxis(90f, rotDir) * playerGFX.transform.rotation;
+                playerMotor.Rotate(end);
+            }
         }
     }
 

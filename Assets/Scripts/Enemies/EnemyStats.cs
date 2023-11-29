@@ -29,8 +29,6 @@ public class EnemyStats : MonoBehaviour
 
     [Header("Damages")]
     [SerializeField][Range(1, 50)] int damage;
-    [SerializeField] private float attackCooldown;
-    private float timer;
     [HideInInspector] public bool canAttack = false;
 
     [Header("Layer(s)")]
@@ -61,17 +59,7 @@ public class EnemyStats : MonoBehaviour
         // If he is next to player he can attack (detection is in EnemyBase script)
         if (canAttack && enemyBase.GetcanMove())
         {
-            // The attackCooldown timer increase each second
-            timer += Time.deltaTime;
-
-            // Enemy can attack every cooldown
-            if (timer >= attackCooldown)
-            {
-                Attack();
-
-                // Reset attackCooldown timer
-                timer = 0;
-            }
+            Attack();
         }
 
         PoisonEffect();
@@ -92,6 +80,9 @@ public class EnemyStats : MonoBehaviour
             {
                 //Debug.Log(go.name + " hit");
                 go.GetComponent<PlayerHP>().TakeDamage(damage);
+
+                // End turn
+                enemyBase.SetcanMove(false);
             }
         }
         if (Physics.Raycast(transform.position + transform.up * yOffset - transform.forward, transform.TransformDirection(-Vector3.up), out hitPlayer, Mathf.Infinity, whatIsObstacle))
@@ -102,6 +93,9 @@ public class EnemyStats : MonoBehaviour
             {
                 //Debug.Log(go.name + " hit");
                 go.GetComponent<PlayerHP>().TakeDamage(damage);
+
+                // End turn
+                enemyBase.SetcanMove(false);
             }
         }
         if (Physics.Raycast(transform.position + transform.up * yOffset + transform.right, transform.TransformDirection(-Vector3.up), out hitPlayer, Mathf.Infinity, whatIsObstacle))
@@ -112,6 +106,9 @@ public class EnemyStats : MonoBehaviour
             {
                 //Debug.Log(go.name + " hit");
                 go.GetComponent<PlayerHP>().TakeDamage(damage);
+
+                // End turn
+                enemyBase.SetcanMove(false);
             }
         }
         if (Physics.Raycast(transform.position + transform.up * yOffset - transform.right, transform.TransformDirection(-Vector3.up), out hitPlayer, Mathf.Infinity, whatIsObstacle))
@@ -122,11 +119,11 @@ public class EnemyStats : MonoBehaviour
             {
                 //Debug.Log(go.name + " hit");
                 go.GetComponent<PlayerHP>().TakeDamage(damage);
+
+                // End turn
+                enemyBase.SetcanMove(false);
             }
         }
-
-        // End turn
-        enemyBase.SetcanMove(false);
     }
 
     /// <summary>

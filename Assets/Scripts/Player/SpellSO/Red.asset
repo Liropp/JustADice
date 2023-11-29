@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 100
   _isPoisoned: 0
-  description: Utime attack
+  isDistantAttack: 0
+  description: Ultime attack // big cooldown
