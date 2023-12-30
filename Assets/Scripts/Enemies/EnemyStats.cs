@@ -6,9 +6,12 @@ using UnityEngine.UI;
 [RequireComponent(typeof(EnemyBase))]
 public class EnemyStats : MonoBehaviour
 {
-    [Header("Health Points")]
+    [Header("Stats")]
+    [SerializeField] private StatsAI stats;
+
+    [Header("Health")]
     [SerializeField] private Slider healthBar;
-    [SerializeField][Range(1, 300)] private float maxHP;
+    private float maxHP;
     private float currHP;
 
     [Header("Malus")]
@@ -20,6 +23,7 @@ public class EnemyStats : MonoBehaviour
     [SerializeField] Color PoisonedColor;
     int poisonDuration;
     int curPoisonDuration;
+    public int spl_disableAmount { get; private set; }
 
     [Header("UI")]
     [SerializeField] private Canvas _canvas;
@@ -28,7 +32,7 @@ public class EnemyStats : MonoBehaviour
     private EnemyBase enemyBase;
 
     [Header("Damages")]
-    [SerializeField][Range(1, 50)] int damage;
+    private int damage;
     [HideInInspector] public bool canAttack = false;
 
     [Header("Layer(s)")]
@@ -39,12 +43,19 @@ public class EnemyStats : MonoBehaviour
 
     private void Awake()
     {
+        //Ref
+        enemyBase = gameObject.GetComponent<EnemyBase>();
+
+        // ScriptableObject stats
+        maxHP = stats._maxHP;
+        healthBar.maxValue = stats._maxHP;
+        damage = stats._damage;
+        spl_disableAmount = stats._spl_disableAmount;
+        enemyBase.moveDist = stats._moveDist;
+
         // Fill HP
         currHP = maxHP;
         RefreshHealthBar();
-
-        //Ref
-        enemyBase = gameObject.GetComponent<EnemyBase>();
 
         // Set
         poisonDuration = 0;
@@ -70,60 +81,28 @@ public class EnemyStats : MonoBehaviour
     /// </summary>
     void Attack()
     {
-        // Check around the enemy (but not in diagonal) if there is a player. If a player is detected he take damage.
-        RaycastHit hitPlayer;
-        if (Physics.Raycast(transform.position + transform.up * yOffset + transform.forward, transform.TransformDirection(-Vector3.up), out hitPlayer, Mathf.Infinity, whatIsObstacle))
+        //Debug.Log(enemyBase.target.name + " hit");
+        enemyBase.target.GetComponent<PlayerHP>().TakeDamage(damage);
+
+        switch (stats.name)
         {
-            GameObject go = hitPlayer.collider.gameObject;
-
-            if (go.CompareTag("Player"))
-            {
-                //Debug.Log(go.name + " hit");
-                go.GetComponent<PlayerHP>().TakeDamage(damage);
-
-                // End turn
-                enemyBase.SetcanMove(false);
-            }
+            case "Knight_Stats":
+                FindObjectOfType<AudioManager>().Play("KnightAttack");
+                break;
+            case "Prince_Stats":
+                FindObjectOfType<AudioManager>().Play("PrinceAttack");
+                break;
+            case "King_Stats":
+                FindObjectOfType<AudioManager>().Play("KingAttack");
+                break;
+            case "Dragon_Stats":
+                FindObjectOfType<AudioManager>().Play("DragonAttack");
+                break;
         }
-        if (Physics.Raycast(transform.position + transform.up * yOffset - transform.forward, transform.TransformDirection(-Vector3.up), out hitPlayer, Mathf.Infinity, whatIsObstacle))
-        {
-            GameObject go = hitPlayer.collider.gameObject;
 
-            if (go.CompareTag("Player"))
-            {
-                //Debug.Log(go.name + " hit");
-                go.GetComponent<PlayerHP>().TakeDamage(damage);
-
-                // End turn
-                enemyBase.SetcanMove(false);
-            }
-        }
-        if (Physics.Raycast(transform.position + transform.up * yOffset + transform.right, transform.TransformDirection(-Vector3.up), out hitPlayer, Mathf.Infinity, whatIsObstacle))
-        {
-            GameObject go = hitPlayer.collider.gameObject;
-
-            if (go.CompareTag("Player"))
-            {
-                //Debug.Log(go.name + " hit");
-                go.GetComponent<PlayerHP>().TakeDamage(damage);
-
-                // End turn
-                enemyBase.SetcanMove(false);
-            }
-        }
-        if (Physics.Raycast(transform.position + transform.up * yOffset - transform.right, transform.TransformDirection(-Vector3.up), out hitPlayer, Mathf.Infinity, whatIsObstacle))
-        {
-            GameObject go = hitPlayer.collider.gameObject;
-
-            if (go.CompareTag("Player"))
-            {
-                //Debug.Log(go.name + " hit");
-                go.GetComponent<PlayerHP>().TakeDamage(damage);
-
-                // End turn
-                enemyBase.SetcanMove(false);
-            }
-        }
+        // End turn
+        enemyBase.SetcanMove(false);
+        canAttack = false;
     }
 
     /// <summary>
@@ -141,11 +120,14 @@ public class EnemyStats : MonoBehaviour
     public void TakeDamage(int damage, bool _isPoisoned)
     {
         // take or not, poison damage
+        if(!isPoisoned)
         isPoisoned = _isPoisoned;
 
         currHP -= damage;
-        Debug.Log(currHP);
+        //Debug.Log(currHP);
         RefreshHealthBar();
+
+        FindObjectOfType<AudioManager>().Play("Damage");
 
         // if the enemy have 0 or less HP, he is dead
         if (currHP <= 0)
@@ -163,7 +145,7 @@ public class EnemyStats : MonoBehaviour
     }
 
     /// <summary>
-    /// Take poison damage each turn
+    /// take poison damage each turn
     /// </summary>
     void PoisonEffect()
     {
@@ -177,7 +159,7 @@ public class EnemyStats : MonoBehaviour
                 TakeDamage(poisonDamage, true);
 
                 curPoisonDuration++;
-                Debug.Log("Enemy take poison damage");
+                //Debug.Log("Enemy take poison damage");
 
                 // ">", because we don't want to count the first damage as a turn
                 if (curPoisonDuration > maxPoisonDuration)
@@ -186,13 +168,12 @@ public class EnemyStats : MonoBehaviour
                     poisonDuration = 0;
                     curPoisonDuration = 0;
                     fill.color = NormalColor;
-                    Debug.Log("Enemy is'nt poisoned anymore");
+                    //Debug.Log("Enemy is'nt poisoned anymore");
                 }
             }
         }
         else if (!enemyBase.GetcanMove())
         {
-
             poisonDuration = curPoisonDuration;
         }
     }

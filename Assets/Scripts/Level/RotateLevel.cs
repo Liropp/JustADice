@@ -32,10 +32,14 @@ public class RotateLevel : MonoBehaviour
             _camera.transform.rotation = Quaternion.Euler(30, -225, 0);
 
             btns[0].position = btnsPositions[1].position;
+            btns[0].rotation = btnsPositions[1].rotation;
             //Debug.Log(btns[0].position+" "+ btnsPositions[1].position);
             btns[1].position = btnsPositions[0].position;
+            btns[1].rotation = btnsPositions[0].rotation;
             btns[2].position = btnsPositions[3].position;
+            btns[2].rotation = btnsPositions[3].rotation;
             btns[3].position = btnsPositions[2].position;
+            btns[3].rotation = btnsPositions[2].rotation;
         }
         else
         {
@@ -44,9 +48,13 @@ public class RotateLevel : MonoBehaviour
             _camera.transform.rotation = startRot;
 
             btns[0].position = btnsPositions[0].position;
+            btns[0].rotation = btnsPositions[0].rotation;
             btns[1].position = btnsPositions[1].position;
+            btns[1].rotation = btnsPositions[1].rotation;
             btns[2].position = btnsPositions[2].position;
+            btns[2].rotation = btnsPositions[2].rotation;
             btns[3].position = btnsPositions[3].position;
+            btns[3].rotation = btnsPositions[3].rotation;
         }
         #endregion
     }

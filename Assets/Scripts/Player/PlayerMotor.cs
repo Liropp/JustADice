@@ -49,6 +49,7 @@ public class PlayerMotor : MonoBehaviour
             t = 0.0f;
 
             // End turn
+            if(!playerController.isTuto)
             playerController.SetcanMove(false);
         }
     }

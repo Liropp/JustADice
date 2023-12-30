@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [Header("Ref(s)")]
     public GameObject playerGFX;
     PlayerMotor playerMotor;
+    public PowerSystem myPS;
 
     [Header("Layer(s)")]
     [SerializeField] LayerMask whatIsGround;
@@ -17,6 +18,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("Raycasts")]
     [SerializeField] private float yOffset;
+
+    [Header("Tutorial")]
+    public bool isTuto = false;
 
     // If it's his turn, he can make a move
     private bool canMove = true;
@@ -41,31 +45,34 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void MoveForward()
     {
-        #region Detect ground ?
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position + transform.forward, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
+        if (gameObject.GetComponent<PlayerAttack>().attackBtn.activeSelf)
         {
-            #region Debug(s)
-            //Debug.DrawRay(transform.position + transform.forward, transform.TransformDirection(-Vector3.up) * hit.distance, Color.yellow, 5f);
-            //Debug.Log("Did Hit");
-            #endregion
-
-            #region Detect obstacle ?
-            RaycastHit hitObstacle;
-            if (!Physics.Raycast(transform.position + transform.up * yOffset + transform.forward, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+            #region Detect ground ?
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position + transform.forward, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
             {
-                Move(transform.forward, Vector3.right);
+                #region Debug(s)
+                //Debug.DrawRay(transform.position + transform.forward, transform.TransformDirection(-Vector3.up) * hit.distance, Color.yellow, 5f);
+                //Debug.Log("Did Hit : " + hit.collider.gameObject.name);
+                #endregion
+
+                #region Detect obstacle ?
+                RaycastHit hitObstacle;
+                if (!Physics.Raycast(transform.position + transform.up * yOffset + transform.forward, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                {
+                    Move(transform.forward, Vector3.right);
+                }
+                #endregion
+            }
+            else
+            {
+                #region Debug(s)
+                //Debug.DrawRay(transform.position + transform.forward, transform.TransformDirection(-Vector3.up) * 100, Color.white, 5f);
+                //Debug.Log("Did not Hit");
+                #endregion
             }
             #endregion
         }
-        else
-        {
-            #region Debug(s)
-            //Debug.DrawRay(transform.position + transform.forward, transform.TransformDirection(-Vector3.up) * 100, Color.white, 5f);
-            //Debug.Log("Did not Hit");
-            #endregion
-        }
-        #endregion
     }
 
     /// <summary>
@@ -73,31 +80,34 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void MoveBackward()
     {
-        #region Dectect ground ?
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position - transform.forward, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
+        if (gameObject.GetComponent<PlayerAttack>().attackBtn.activeSelf)
         {
-            #region Debug(s)
-            //Debug.DrawRay(transform.position - transform.forward, transform.TransformDirection(-Vector3.up) * hit.distance, Color.yellow, 5f);
-            //Debug.Log("Did Hit");
-            #endregion
-
-            #region Detect obstacle ?
-            RaycastHit hitObstacle;
-            if (!Physics.Raycast(transform.position + transform.up * yOffset - transform.forward, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+            #region Dectect ground ?
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position - transform.forward, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
             {
-                Move(-transform.forward, -Vector3.right);
+                #region Debug(s)
+                //Debug.DrawRay(transform.position - transform.forward, transform.TransformDirection(-Vector3.up) * hit.distance, Color.yellow, 5f);
+                //Debug.Log("Did Hit");
+                #endregion
+
+                #region Detect obstacle ?
+                RaycastHit hitObstacle;
+                if (!Physics.Raycast(transform.position + transform.up * yOffset - transform.forward, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                {
+                    Move(-transform.forward, -Vector3.right);
+                }
+                #endregion
+            }
+            else
+            {
+                #region Debug(s)
+                //Debug.DrawRay(transform.position - transform.forward, transform.TransformDirection(-Vector3.up) * 100, Color.white, 5f);
+                //Debug.Log("Did not Hit");
+                #endregion
             }
             #endregion
         }
-        else
-        {
-            #region Debug(s)
-            //Debug.DrawRay(transform.position - transform.forward, transform.TransformDirection(-Vector3.up) * 100, Color.white, 5f);
-            //Debug.Log("Did not Hit");
-            #endregion
-        }
-        #endregion
     }
 
     /// <summary>
@@ -105,31 +115,34 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void MoveRight()
     {
-        #region Detect ground ?
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position + transform.right, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
+        if (gameObject.GetComponent<PlayerAttack>().attackBtn.activeSelf)
         {
-            #region Debug(s)
-            //Debug.DrawRay(transform.position + transform.forward, transform.TransformDirection(-Vector3.up) * hit.distance, Color.yellow, 5f);
-            //Debug.Log("Did Hit");
-            #endregion
-
-            #region Detect obstacle ?
-            RaycastHit hitObstacle;
-            if (!Physics.Raycast(transform.position + transform.up * yOffset + transform.right, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+            #region Detect ground ?
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position + transform.right, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
             {
-                Move(transform.right, -Vector3.forward);
+                #region Debug(s)
+                //Debug.DrawRay(transform.position + transform.forward, transform.TransformDirection(-Vector3.up) * hit.distance, Color.yellow, 5f);
+                //Debug.Log("Did Hit");
+                #endregion
+
+                #region Detect obstacle ?
+                RaycastHit hitObstacle;
+                if (!Physics.Raycast(transform.position + transform.up * yOffset + transform.right, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                {
+                    Move(transform.right, -Vector3.forward);
+                }
+                #endregion
+            }
+            else
+            {
+                #region Debug(s)
+                //Debug.DrawRay(transform.position + transform.right, transform.TransformDirection(-Vector3.up) * 100, Color.white, 5f);
+                //Debug.Log("Did not Hit");
+                #endregion
             }
             #endregion
         }
-        else
-        {
-            #region Debug(s)
-            //Debug.DrawRay(transform.position + transform.right, transform.TransformDirection(-Vector3.up) * 100, Color.white, 5f);
-            //Debug.Log("Did not Hit");
-            #endregion
-        }
-        #endregion
     }
 
     /// <summary>
@@ -137,31 +150,34 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void MoveLeft()
     {
-        #region Dectect ground ?
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position - transform.right, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
+        if (gameObject.GetComponent<PlayerAttack>().attackBtn.activeSelf)
         {
-            #region Debug(s)
-            //Debug.DrawRay(transform.position - transform.right, transform.TransformDirection(-Vector3.up) * hit.distance, Color.yellow, 5f);
-            //Debug.Log("Did Hit");
-            #endregion
-
-            #region Detect obstacle ?
-            RaycastHit hitObstacle;
-            if (!Physics.Raycast(transform.position + transform.up * yOffset - transform.right, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+            #region Dectect ground ?
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position - transform.right, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
             {
-                Move(-transform.right, Vector3.forward);
+                #region Debug(s)
+                //Debug.DrawRay(transform.position - transform.right, transform.TransformDirection(-Vector3.up) * hit.distance, Color.yellow, 5f);
+                //Debug.Log("Did Hit");
+                #endregion
+
+                #region Detect obstacle ?
+                RaycastHit hitObstacle;
+                if (!Physics.Raycast(transform.position + transform.up * yOffset - transform.right, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                {
+                    Move(-transform.right, Vector3.forward);
+                }
+                #endregion
+            }
+            else
+            {
+                #region Debug(s)
+                //Debug.DrawRay(transform.position - transform.right, transform.TransformDirection(-Vector3.up) * 100, Color.white, 5f);
+                //Debug.Log("Did not Hit");
+                #endregion
             }
             #endregion
         }
-        else
-        {
-            #region Debug(s)
-            //Debug.DrawRay(transform.position - transform.right, transform.TransformDirection(-Vector3.up) * 100, Color.white, 5f);
-            //Debug.Log("Did not Hit");
-            #endregion
-        }
-        #endregion
     }
 
     /// <summary>

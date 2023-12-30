@@ -6,10 +6,47 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Game.unity
-    guid: c850ee8c3b14cc8459e7e186857cf567
+    path: Assets/Scenes/MainMenu.unity
+    guid: 0781122724bdc734883fe514d0467b63
+  - enabled: 1
+    path: Assets/Scenes/Level_1.unity
+    guid: f737024b981d1d248956746101a158aa
+  - enabled: 1
+    path: Assets/Scenes/Level_2.unity
+    guid: e74357d89bc7b7b409cd13b6bdfd6355
+  - enabled: 1
+    path: Assets/Scenes/Level_3.unity
+    guid: 9e55d8b1f1f9df24d805e210bcfbeaf1
+  - enabled: 1
+    path: Assets/Scenes/Level_4.unity
+    guid: 16d06068e6dc27e4a840290a16339c81
+  - enabled: 1
+    path: Assets/Scenes/Level_5.unity
+    guid: 38707040c2e00a64cab38e4aa0746e20
+  - enabled: 1
+    path: Assets/Scenes/Level_6.unity
+    guid: 5f88d6faef94ee04aa93d11d372a330a
+  - enabled: 1
+    path: Assets/Scenes/Level_7.unity
+    guid: 3cffa5da10a0f1547a68e1cfed490b51
+  - enabled: 1
+    path: Assets/Scenes/Level_8.unity
+    guid: 115721846dd97e840841a168e306fcd5
+  - enabled: 1
+    path: Assets/Scenes/Level_9.unity
+    guid: 1aa275570a7b9e04388aadf41e71e747
+  - enabled: 1
+    path: Assets/Scenes/Level_10.unity
+    guid: fedc1f7f7dfaa934ebf91eae7897679c
+  - enabled: 1
+    path: Assets/Scenes/Versus.unity
+    guid: d0b12a5a699fbb549b1002c7cab7ff4a
   m_configObjects:
+    com.unity.adaptiveperformance.google.android.provider_settings: {fileID: 11400000,
+      guid: 2d62dd78f97d51441aab7e55df997c37, type: 2}
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: e14a747b78f1c224fa3e0fd286b7e7b7,
       type: 2}
+    com.unity.adaptiveperformance.samsung.android.provider_settings: {fileID: 11400000,
+      guid: f36b1cf8e8a081b4c97ad85f2cbe4777, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000,
       guid: 5156908a298371846aee7b44e7b6cb1e, type: 2}

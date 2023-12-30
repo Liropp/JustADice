@@ -1,49 +1,77 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerAttack : MonoBehaviour
 {
-    // Can player attack ?
-    private bool canAttack = false;
-    // Damage amount
-    private int damage = 20;
-    private bool _isPoisoned = false;
-    // Attack Btn
-    [SerializeField] GameObject attackBtn;
     //Ref
     private PlayerController playerController;
 
+    // Can attack ?
+    private bool canAttack = false;
+
+    // Stats
+    private int damage = 20;
+    private int healPoints = 0;
+    private bool isPoisoned = false;
+
+    // Attack Btn
+    public GameObject attackBtn;
+
     [Header("Spells")]
-    [SerializeField] private Spell spellGreen;
-    [SerializeField] private Spell spellBlack;
-    [SerializeField] private Spell spellPink;
-    [SerializeField] private Spell spellYellow;
-    [SerializeField] private Spell spellRed;
-    [SerializeField] private Spell spellBlue;
+    [SerializeField] LayerMask whatIsGround;
+    [SerializeField] private Spell spl_Green;
+    [SerializeField] private Spell spl_Black;
+    [SerializeField] private Spell spl_Pink;
+    [SerializeField] private Spell spl_Yellow;
+    [SerializeField] private Spell spl_Red;
+    [SerializeField] private Spell spl_Blue;
+    [SerializeField] private Text spl_cooldownTxt;
     private bool enemyAround = false;
     private bool isDistantAttack = false;
-    private bool canBreakGround = false;
+    private bool canTeleport = false;
+    private bool canHeal = false;
+    private Spell spl_selected;
+    private List<Spell> spells;
+    string groundColor;
 
     private void Awake()
     {
         playerController = gameObject.GetComponent<PlayerController>();
+        spells = new List<Spell>();
+
+        spells.Add(spl_Green);
+        spells.Add(spl_Black);
+        spells.Add(spl_Pink);
+        spells.Add(spl_Yellow);
+        spells.Add(spl_Red);
+        spells.Add(spl_Blue);
+
+        foreach (var spell in spells)
+        {
+            spell.curUseSpellCooldown = 0;
+            spell.canUseSpell = true;
+            spell.enable = true;
+        }
     }
 
     private void Update()
     {
-        DetectTargetAround();
+        if (!playerController.isTuto)
+        {
+            DetectTargetAround();
+        }
 
-        // If player can attack and choose a target with his spell
+        // If player can attack & choose a target
         if (canAttack && Input.GetKeyDown(KeyCode.Mouse0) && playerController.GetcanMove())
         {
             DetectTarget();
         }
 
-        CheckSpell();
+        SetupCurSpell();
+
+        //Debug.Log(spl_Black.curUseSpellCooldown);
     }
 
     /// <summary>
@@ -60,35 +88,127 @@ public class PlayerAttack : MonoBehaviour
             // An object is hit
             GameObject hitObject = hit.collider.gameObject;
 
-            // Check if the object is an enemy and if he next to player, in order to give him damage
-            if (hitObject.CompareTag("Enemy") && !canBreakGround)
+            GameManager gM = FindObjectOfType<GameManager>();
+            if (!gM.isMulti)
             {
-                float dist = Mathf.Round(Vector3.Distance(hitObject.transform.position, transform.position));
-                //Debug.Log(dist);
-
-                if (dist <= 1 || isDistantAttack)
+                // Check if the object is an enemy and if he next to player, in order to give him damage
+                if (hitObject.CompareTag("Enemy") && !canTeleport && !canHeal)
                 {
-                    //Debug.Log(hitObject.name + " hit");
-                    hitObject.GetComponent<EnemyStats>().TakeDamage(damage, _isPoisoned);
-                    attackBtn.SetActive(true);
+                    float dist = Mathf.Round(Vector3.Distance(hitObject.transform.position, transform.position));
+                    //Debug.Log(dist);
 
-                    // End turn
-                    playerController.SetcanMove(false);
+                    if (dist <= 1 || isDistantAttack)
+                    {
+                        //Debug.Log(hitObject.name + " hit");
+                        hitObject.GetComponent<EnemyStats>().TakeDamage(damage, isPoisoned);
 
-                    canAttack = false;
+                        switch (playerController.DiceUpColor())
+                        {
+                            case "Green":
+                                //Debug.Log("Poison");
+                                FindObjectOfType<AudioManager>().Play("GreenSpell");
+
+                                break;
+                            case "Red":
+                                //Debug.Log("Poison");
+                                FindObjectOfType<AudioManager>().Play("RedSpell");
+
+                                break;
+                            case "Yellow":
+                                //Debug.Log("Poison");
+                                FindObjectOfType<AudioManager>().Play("YellowSpell");
+
+                                break;
+                            case "Blue":
+                                //Debug.Log("Poison");
+                                FindObjectOfType<AudioManager>().Play("BlueSpell");
+
+                                break;
+                        }
+
+                        attackBtn.SetActive(true);
+
+                        // End turn
+                        playerController.SetcanMove(false);
+
+                        canAttack = false;
+                    }
                 }
             }
-            else if(hitObject.layer == 3 && canBreakGround)
+            else
             {
-                hitObject.SetActive(false);
-                attackBtn.SetActive(true);
+                // Check if the object is another player and if he next to this player, in order to give him damage
+                if (hitObject.CompareTag("Player") && hitObject.gameObject != this.gameObject && !canTeleport && !canHeal)
+                {
+                    float dist = Mathf.Round(Vector3.Distance(hitObject.transform.position, transform.position));
+                    //Debug.Log(dist);
 
-                // End turn
-                playerController.SetcanMove(false);
+                    if (dist <= 1 || isDistantAttack)
+                    {
+                        //Debug.Log(hitObject.name + " hit");
+                        hitObject.GetComponent<PlayerHP>().PlayerTakeDamage(damage, isPoisoned);
 
-                canAttack = false;
+                        switch (playerController.DiceUpColor())
+                        {
+                            case "Green":
+                                //Debug.Log("Poison");
+                                FindObjectOfType<AudioManager>().Play("GreenSpell");
+
+                                break;
+                            case "Red":
+                                //Debug.Log("Poison");
+                                FindObjectOfType<AudioManager>().Play("RedSpell");
+
+                                break;
+                            case "Yellow":
+                                //Debug.Log("Poison");
+                                FindObjectOfType<AudioManager>().Play("YellowSpell");
+
+                                break;
+                            case "Blue":
+                                //Debug.Log("Poison");
+                                FindObjectOfType<AudioManager>().Play("BlueSpell");
+
+                                break;
+                        }
+
+                        attackBtn.SetActive(true);
+
+                        // End turn
+                        playerController.SetcanMove(false);
+
+                        canAttack = false;
+                    }
+                }
+            }
+
+            if (hitObject.layer == 3 && canTeleport)
+            {
+                Teleportation(hit.point);
             }
         }
+    }
+
+    /// <summary>
+    /// player can tp with the black spell
+    /// </summary>
+    /// <param name="_hitPoint"></param>
+    private void Teleportation(Vector3 _hitPoint)
+    {
+        //Debug.Log("player teleport");
+        FindObjectOfType<AudioManager>().Play("BlackSpell");
+
+        Vector3 centeredPos = new Vector3(Mathf.RoundToInt(_hitPoint.x), transform.position.y, Mathf.RoundToInt(_hitPoint.z));
+        //Debug.Log(centeredPos);
+        //Debug.Log(_hitPoint);
+        transform.position = centeredPos;
+
+        attackBtn.SetActive(true);
+
+        // End turn
+        playerController.SetcanMove(false);
+
+        canAttack = false;
     }
 
     /// <summary>
@@ -113,61 +233,117 @@ public class PlayerAttack : MonoBehaviour
             {
                 // An object is hit
                 GameObject hitObject = hitCollider.gameObject;
+                GameManager gM = FindObjectOfType<GameManager>();
 
-                // Check if the object is an Enemy
-                if (hitObject.CompareTag("Enemy"))
+                if (!gM.isMulti)
                 {
-                    //Debug.Log("enemy around");
-                    enemyAround = true;
+                    // Check if the object is an Enemy
+                    if (hitObject.CompareTag("Enemy"))
+                    {
+                        //Debug.Log("enemy around");
+                        enemyAround = true;
+                    }
+                }
+                else
+                {
+                    // Check if the object is another Player
+                    if (hitObject.CompareTag("Player") && hitObject.gameObject != this.gameObject)
+                    {
+                        //Debug.Log("another player around");
+                        enemyAround = true;
+                    }
                 }
             }
         }
-        else if (hitBack.Length > 0)
+        
+        if (hitBack.Length > 0)
         {
             foreach (var hitCollider in hitBack)
             {
                 // An object is hit
                 GameObject hitObject = hitCollider.gameObject;
+                GameManager gM = FindObjectOfType<GameManager>();
 
-                // Check if the object is an Enemy
-                if (hitObject.CompareTag("Enemy"))
+                if (!gM.isMulti)
                 {
-                    //Debug.Log("enemy around");
-                    enemyAround = true;
+                    // Check if the object is an Enemy
+                    if (hitObject.CompareTag("Enemy"))
+                    {
+                        //Debug.Log("enemy around");
+                        enemyAround = true;
+                    }
+                }
+                else
+                {
+                    // Check if the object is another Player
+                    if (hitObject.CompareTag("Player") && hitObject.gameObject != this.gameObject)
+                    {
+                        //Debug.Log("another player around");
+                        enemyAround = true;
+                    }
                 }
             }
         }
-        else if (hitRight.Length > 0)
+        
+        if (hitRight.Length > 0)
         {
             foreach (var hitCollider in hitRight)
             {
                 // An object is hit
                 GameObject hitObject = hitCollider.gameObject;
+                GameManager gM = FindObjectOfType<GameManager>();
 
-                // Check if the object is an Enemy
-                if (hitObject.CompareTag("Enemy"))
+                if (!gM.isMulti)
                 {
-                    //Debug.Log("enemy around");
-                    enemyAround = true;
+                    // Check if the object is an Enemy
+                    if (hitObject.CompareTag("Enemy"))
+                    {
+                        //Debug.Log("enemy around");
+                        enemyAround = true;
+                    }
+                }
+                else
+                {
+                    // Check if the object is another Player
+                    if (hitObject.CompareTag("Player") && hitObject.gameObject != this.gameObject)
+                    {
+                        //Debug.Log("another player around");
+                        enemyAround = true;
+                    }
                 }
             }
         }
-        else if (hitLeft.Length > 0)
+
+        if (hitLeft.Length > 0)
         {
             foreach (var hitCollider in hitLeft)
             {
                 // An object is hit
                 GameObject hitObject = hitCollider.gameObject;
+                GameManager gM = FindObjectOfType<GameManager>();
 
-                // Check if the object is an Enemy
-                if (hitObject.CompareTag("Enemy"))
+                if (!gM.isMulti)
                 {
-                    //Debug.Log("enemy around");
-                    enemyAround = true;
+                    // Check if the object is an Enemy
+                    if (hitObject.CompareTag("Enemy"))
+                    {
+                        //Debug.Log("enemy around");
+                        enemyAround = true;
+                    }
+                }
+                else
+                {
+                    // Check if the object is another Player
+                    if (hitObject.CompareTag("Player") && hitObject.gameObject != this.gameObject)
+                    {
+                        //Debug.Log("another player around");
+                        enemyAround = true;
+                    }
                 }
             }
         }
-        else
+
+        if(hitForward.Length <= 0 && hitBack.Length <= 0 && hitRight.Length <= 0 && hitLeft.Length <= 0)
         {
             enemyAround = false;
         }
@@ -178,68 +354,339 @@ public class PlayerAttack : MonoBehaviour
     /// </summary>
     public void Attack()
     {
-        // only if there is an enemy next to player
-        if (enemyAround || isDistantAttack || canBreakGround)
+        if (spl_selected.canUseSpell && spl_selected.enable)
         {
-            canAttack = true;
-            attackBtn.SetActive(false);
+            // only if there is an enemy next to player
+            if (enemyAround || isDistantAttack || canHeal || canTeleport && playerController.GetcanMove())
+            {
+                canAttack = true;
+                attackBtn.SetActive(false);
+
+                if (canHeal)
+                {
+                    FindObjectOfType<AudioManager>().Play("PinkSpell");
+                    gameObject.GetComponent<PlayerHP>().Heal(healPoints);
+                    attackBtn.SetActive(true);
+
+                    // End turn
+                    playerController.SetcanMove(false);
+
+                    canAttack = false;
+                }
+
+                spl_selected.curUseSpellCooldown = spl_selected.useSpellMaxCooldown;
+                spl_selected.canUseSpell = false;
+            }
+            else
+            {
+                attackBtn.SetActive(true);
+                canAttack = false;
+            }
+        }
+
+        if (!spl_selected.canUseSpell)
+        {
+            if(spl_selected.curUseSpellCooldown <= 0)
+            {
+                spl_selected.canUseSpell = true;
+            }
         }
     }
 
     /// <summary>
-    /// What is the current spell ?
+    /// setup color and stats for the selected spell
     /// </summary>
-    private void CheckSpell()
+    private void SetupCurSpell()
     {
+        RaycastHit down;
+        if (Physics.Raycast(transform.position, -transform.up, out down, 1f, whatIsGround))
+        {
+            groundColor = down.collider.gameObject.name;
+            //Debug.Log(groundColor);
+        }
+
         switch (playerController.DiceUpColor())
         {
             case "Green":
-                //Debug.Log("Feuille tranchante");
-                attackBtn.GetComponent<Image>().color = Color.green;
-                damage = spellGreen.damage;
-                isDistantAttack = spellGreen.isDistantAttack;
-                canBreakGround = spellGreen.canBreakGround;
+                //Debug.Log("Poison");
+
+                // ref
+                spl_selected = spl_Green;
+
+                if (spl_selected.enable)
+                {
+                    // stats
+                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    attackBtn.GetComponent<Image>().color = Color.green;
+
+                    if (groundColor == "Green")
+                    {
+                        damage = spl_Green.damage * 2;
+                    }
+                    else
+                    {
+                        damage = spl_Green.damage;
+                    }
+
+                    healPoints = spl_Green.healPoints;
+                    isPoisoned = spl_Green._isPoisoned;
+                    isDistantAttack = spl_Green._isDistantAttack;
+                    canTeleport = spl_Green._canTeleport;
+                    canHeal = spl_Green._canHeal;
+                }
+                else
+                {
+                    attackBtn.GetComponent<Image>().color = Color.grey;
+                    RefreshSpellCdText("x");
+                    damage = 0;
+                    healPoints = 0;
+                    isPoisoned = false;
+                    isDistantAttack = false;
+                    canTeleport = false;
+                    canHeal = false;
+                }
+
                 break;
             case "Black":
-                //Debug.Log("Trou noir");
-                attackBtn.GetComponent<Image>().color = Color.black;
-                damage = spellBlack.damage;
-                isDistantAttack = spellBlack.isDistantAttack;
-                canBreakGround = spellBlack.canBreakGround;
+                //Debug.Log("Black Hole");
+
+                // ref
+                spl_selected = spl_Black;
+
+                if (spl_selected.enable)
+                {
+                    // stats
+                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    attackBtn.GetComponent<Image>().color = Color.black;
+                    damage = spl_Black.damage;
+                    healPoints = spl_Black.healPoints;
+                    isPoisoned = spl_Black._isPoisoned;
+                    isDistantAttack = spl_Black._isDistantAttack;
+                    canTeleport = spl_Black._canTeleport;
+                    canHeal = spl_Black._canHeal;
+                }
+                else
+                {
+                    attackBtn.GetComponent<Image>().color = Color.grey;
+                    RefreshSpellCdText("x");
+                    damage = 0;
+                    healPoints = 0;
+                    isPoisoned = false;
+                    isDistantAttack = false;
+                    canTeleport = false;
+                    canHeal = false;
+                }
+
                 break;
             case "Pink":
-                //Debug.Log("Charme");
-                attackBtn.GetComponent<Image>().color = Color.magenta;
-                damage = spellPink.damage;
-                _isPoisoned = spellPink._isPoisoned;
-                isDistantAttack = spellPink.isDistantAttack;
-                canBreakGround = spellPink.canBreakGround;
+                //Debug.Log("Heal");
+
+                // ref
+                spl_selected = spl_Pink;
+
+                if (spl_selected.enable)
+                {
+                    // stats
+                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    attackBtn.GetComponent<Image>().color = Color.magenta;
+                    damage = spl_Pink.damage;
+
+                    if (groundColor == "Pink")
+                    {
+                        healPoints = spl_Pink.healPoints * 2;
+                    }
+                    else
+                    {
+                        healPoints = spl_Pink.healPoints;
+                    }
+
+                    isPoisoned = spl_Pink._isPoisoned;
+                    isDistantAttack = spl_Pink._isDistantAttack;
+                    canTeleport = spl_Pink._canTeleport;
+                    canHeal = spl_Pink._canHeal;
+                }
+                else
+                {
+                    attackBtn.GetComponent<Image>().color = Color.grey;
+                    RefreshSpellCdText("x");
+                    damage = 0;
+                    healPoints = 0;
+                    isPoisoned = false;
+                    isDistantAttack = false;
+                    canTeleport = false;
+                    canHeal = false;
+                }
+
                 break;
             case "Yellow":
-                //Debug.Log("Ultime");
-                attackBtn.GetComponent<Image>().color = Color.yellow;
-                damage = spellYellow.damage;
-                _isPoisoned = spellYellow._isPoisoned;
-                isDistantAttack = spellYellow.isDistantAttack;
-                canBreakGround = spellYellow.canBreakGround;
+                //Debug.Log("Bow");
+
+                // ref
+                spl_selected = spl_Yellow;
+
+                if (spl_selected.enable)
+                {
+                    // stats
+                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    attackBtn.GetComponent<Image>().color = Color.yellow;
+
+                    if (groundColor == "Yellow")
+                    {
+                        damage = spl_Yellow.damage * 3;
+                    }
+                    else
+                    {
+                        damage = spl_Yellow.damage;
+                    }
+
+                    healPoints = spl_Yellow.healPoints;
+                    isPoisoned = spl_Yellow._isPoisoned;
+                    isDistantAttack = spl_Yellow._isDistantAttack;
+                    canTeleport = spl_Yellow._canTeleport;
+                    canHeal = spl_Yellow._canHeal;
+                }
+                else
+                {
+                    attackBtn.GetComponent<Image>().color = Color.grey;
+                    RefreshSpellCdText("x");
+                    damage = 0;
+                    healPoints = 0;
+                    isPoisoned = false;
+                    isDistantAttack = false;
+                    canTeleport = false;
+                    canHeal = false;
+                }
+
                 break;
             case "Red":
-                //Debug.Log("Vol de vie");
-                attackBtn.GetComponent<Image>().color = Color.red;
-                damage = spellRed.damage;
-                isDistantAttack = spellRed.isDistantAttack;
-                canBreakGround = spellRed.canBreakGround;
+                //Debug.Log("Ultime");
+
+                // ref
+                spl_selected = spl_Red;
+
+                if (spl_selected.enable)
+                {
+                    // stats
+                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    attackBtn.GetComponent<Image>().color = Color.red;
+
+                    if (groundColor == "Red")
+                    {
+                        damage = spl_Red.damage * 2;
+                    }
+                    else
+                    {
+                        damage = spl_Red.damage;
+                    }
+
+                    healPoints = spl_Red.healPoints;
+                    isPoisoned = spl_Red._isPoisoned;
+                    isDistantAttack = spl_Red._isDistantAttack;
+                    canTeleport = spl_Red._canTeleport;
+                    canHeal = spl_Red._canHeal;
+                }
+                else
+                {
+                    attackBtn.GetComponent<Image>().color = Color.grey;
+                    RefreshSpellCdText("x");
+                    damage = 0;
+                    healPoints = 0;
+                    isPoisoned = false;
+                    isDistantAttack = false;
+                    canTeleport = false;
+                    canHeal = false;
+                }
+
                 break;
             case "Blue":
-                //Debug.Log("Recupération de mana");
-                attackBtn.GetComponent<Image>().color = Color.blue;
-                damage = spellBlue.damage;
-                isDistantAttack = spellBlue.isDistantAttack;
-                canBreakGround = spellBlue.canBreakGround;
+                //Debug.Log("Base attack");
+
+                // ref
+                spl_selected = spl_Blue;
+
+                if (spl_selected.enable)
+                {
+                    // stats
+                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    attackBtn.GetComponent<Image>().color = Color.blue;
+
+                    if (groundColor == "Blue")
+                    {
+                        damage = spl_Blue.damage * 3;
+                    }
+                    else
+                    {
+                        damage = spl_Blue.damage;
+                    }
+
+                    healPoints = spl_Blue.healPoints;
+                    isPoisoned = spl_Blue._isPoisoned;
+                    isDistantAttack = spl_Blue._isDistantAttack;
+                    canTeleport = spl_Blue._canTeleport;
+                    canHeal = spl_Blue._canHeal;
+                }
+                else
+                {
+                    attackBtn.GetComponent<Image>().color = Color.grey;
+                    RefreshSpellCdText("x");
+                    damage = 0;
+                    healPoints = 0;
+                    isPoisoned = false;
+                    isDistantAttack = false;
+                    canTeleport = false;
+                    canHeal = false;
+                }
+
                 break;
         }
     }
 
+    /// <summary>
+    /// refresh the text on the attack button showing each cooldown for spells
+    /// </summary>
+    /// <param name="txt"></param>
+    private void RefreshSpellCdText(string txt)
+    {
+        if(spl_cooldownTxt != null)
+        spl_cooldownTxt.text = txt;
+    }
+
+    /// <summary>
+    /// get spells list, from other scripts
+    /// </summary>
+    /// <returns></returns>
+    public List<Spell> GetSpells()
+    {
+        return spells;
+    }
+
+    int times = 0;
+    public void UnableRandomSpells(int count)
+    {
+        times = count;
+
+        if (count <= 6 && count >= 0)
+        {
+            while (times > 0)
+            {
+                int value = Mathf.RoundToInt(Random.Range(0, spells.Count));
+
+                for (int i = 0; i < spells.Count; i++)
+                {
+                    if (i == value && spells[i].enable)
+                    {
+                        spells[i].enable = false;
+                        times--;
+                        Debug.Log(spells[i].name + " is disabled");
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// draw gizmos debug
+    /// </summary>
     private void OnDrawGizmos()
     {
         Vector3 forwardPos = transform.position + Vector3.forward;
