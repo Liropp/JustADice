@@ -408,7 +408,7 @@ public class EnemyBase : MonoBehaviour
             {
                 var endPos = new Vector3(startPos.x + moveDir.x, startPos.y, startPos.z + moveDir.z);
                 //Debug.Log(moveDir);
-                Debug.Log(endPos);
+                //Debug.Log(endPos);
                 float totalDistance = Vector3.Distance(startPos, endPos);
                 float speed = totalDistance / (turnCooldown / 2);
                 float t = timeElapsed * speed;

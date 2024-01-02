@@ -22,7 +22,6 @@ public class MysteryBox : MonoBehaviour
                 other.gameObject.GetComponent<PlayerController>().myPS.NewPower(powerIndex);
             }
 
-            FindObjectOfType<PowerSystem>().owner = other.gameObject;
             Destroy(gameObject);
         }
     }

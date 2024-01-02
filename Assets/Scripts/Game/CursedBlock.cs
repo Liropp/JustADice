@@ -13,6 +13,7 @@ public class CursedBlock : MonoBehaviour
         {
             if(hit.collider.gameObject.CompareTag("Player"))
             {
+                hit.collider.gameObject.transform.position = transform.position;
                 Destroy(this.gameObject);
             }
         }

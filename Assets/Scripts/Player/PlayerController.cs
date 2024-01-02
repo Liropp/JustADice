@@ -214,6 +214,8 @@ public class PlayerController : MonoBehaviour
         if (!state && playOnce)
         {
             FindObjectOfType<GameManager>().pawnPlayed.Invoke();
+            gameObject.GetComponent<PlayerAttack>().canDecreaseCooldown = true;
+            gameObject.GetComponent<PlayerMotor>().multi_movePerTurn = 0;
             playOnce = false;
         }
         else

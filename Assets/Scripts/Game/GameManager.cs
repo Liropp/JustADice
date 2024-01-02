@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     [Header("Multi")]
     public bool isMulti = false;
     [SerializeField] private GameObject[] playerUI;
+    private GameObject currPawnPlaying;
 
     [Header("Pawns")]
     [SerializeField] List<GameObject> pawns = new List<GameObject>();
@@ -173,23 +174,12 @@ public class GameManager : MonoBehaviour
                         //Debug.Log("turn : " + pawns[i].gameObject.name);
 
                         turnText.text = "Turn: " + pawns[i].gameObject.name;
+                        currPawnPlaying = pawns[i].gameObject;
 
                         pawns[i].GetComponent<PlayerController>().SetcanMove(true);
 
                         #region manage turns count
                         turnCount++;
-
-                        if (turnCount > 1)
-                        {
-                            foreach (var spell in pawns[i].GetComponent<PlayerAttack>().GetSpells())
-                            {
-                                if (!spell.canUseSpell && spell.curUseSpellCooldown > 0)
-                                {
-                                    spell.curUseSpellCooldown--;
-                                    //Debug.Log(spell.name + " " + spell.curUseSpellCooldown);
-                                }
-                            }
-                        }
                         #endregion
 
                         for (int j = 0; j < playerUI.Length; j++)
@@ -207,7 +197,8 @@ public class GameManager : MonoBehaviour
                         isPlayerTurn = true;
                     }
                 }
-                else if (pawns[i].gameObject == null || pawns[i].gameObject.activeInHierarchy == false)
+                
+                if (pawns[i].gameObject == null || pawns[i].gameObject.activeInHierarchy == false)
                 {
                     // if a pawn is killed, we remove him from the list to avoid error.
                     pawns.Remove(pawns[i].gameObject);
@@ -303,5 +294,10 @@ public class GameManager : MonoBehaviour
     public int GetTurnCount()
     {
         return turnCount;
+    }
+
+    public GameObject GetCurrPawnPlaying()
+    {
+        return currPawnPlaying;
     }
 }

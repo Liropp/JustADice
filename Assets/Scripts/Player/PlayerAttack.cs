@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,13 +22,15 @@ public class PlayerAttack : MonoBehaviour
 
     [Header("Spells")]
     [SerializeField] LayerMask whatIsGround;
+    [SerializeField] LayerMask whatToAttack;
     [SerializeField] private Spell spl_Green;
     [SerializeField] private Spell spl_Black;
     [SerializeField] private Spell spl_Pink;
     [SerializeField] private Spell spl_Yellow;
     [SerializeField] private Spell spl_Red;
     [SerializeField] private Spell spl_Blue;
-    [SerializeField] private Text spl_cooldownTxt;
+    [SerializeField] private RectMask2D spl_cooldownMask;
+    [SerializeField] private Sprite[] spellSprites;
     private bool enemyAround = false;
     private bool isDistantAttack = false;
     private bool canTeleport = false;
@@ -72,6 +75,15 @@ public class PlayerAttack : MonoBehaviour
         SetupCurSpell();
 
         //Debug.Log(spl_Black.curUseSpellCooldown);
+
+        if (playerController.GetcanMove())
+        {
+            if (canDecreaseCooldown)
+            {
+                DecreaseCooldown();
+                canDecreaseCooldown = false;
+            }
+        }
     }
 
     /// <summary>
@@ -83,7 +95,7 @@ public class PlayerAttack : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, whatToAttack))
         {
             // An object is hit
             GameObject hitObject = hit.collider.gameObject;
@@ -112,16 +124,30 @@ public class PlayerAttack : MonoBehaviour
                             case "Red":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("RedSpell");
+                                #region particles
+                                Vector3 RstartPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z);
+                                Vector3 Rpos = hitObject.transform.position;
+                                FindObjectOfType<VFXManager>().SpawnMoving("Punch", RstartPos, Rpos);
+                                #endregion
 
                                 break;
                             case "Yellow":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("YellowSpell");
+                                #region particles
+                                Vector3 Ypos = hitObject.transform.position;
+                                FindObjectOfType<VFXManager>().SpawnMoving("Arrow", this.transform.position, Ypos);
+                                #endregion
 
                                 break;
                             case "Blue":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("BlueSpell");
+                                #region particles
+                                Vector3 BstartPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z);
+                                Vector3 Bpos = hitObject.transform.position;
+                                FindObjectOfType<VFXManager>().SpawnMoving("Punchs", BstartPos, Bpos);
+                                #endregion
 
                                 break;
                         }
@@ -158,16 +184,30 @@ public class PlayerAttack : MonoBehaviour
                             case "Red":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("RedSpell");
+                                #region particles
+                                Vector3 RstartPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z);
+                                Vector3 Rpos = hitObject.transform.position;
+                                FindObjectOfType<VFXManager>().SpawnMoving("Punch", RstartPos, Rpos);
+                                #endregion
 
                                 break;
                             case "Yellow":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("YellowSpell");
+                                #region particles
+                                Vector3 Ypos = hitObject.transform.position;
+                                FindObjectOfType<VFXManager>().SpawnMoving("Arrow", this.transform.position, Ypos);
+                                #endregion
 
                                 break;
                             case "Blue":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("BlueSpell");
+                                #region particles
+                                Vector3 BstartPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z);
+                                Vector3 Bpos = hitObject.transform.position;
+                                FindObjectOfType<VFXManager>().SpawnMoving("Punchs", BstartPos, Bpos);
+                                #endregion
 
                                 break;
                         }
@@ -197,6 +237,10 @@ public class PlayerAttack : MonoBehaviour
     {
         //Debug.Log("player teleport");
         FindObjectOfType<AudioManager>().Play("BlackSpell");
+        #region particles
+        Vector3 pos = new Vector3(this.transform.position.x, this.transform.position.y - .5f, this.transform.position.z);
+        FindObjectOfType<VFXManager>().Spawn("TP", pos, 3f);
+        #endregion
 
         Vector3 centeredPos = new Vector3(Mathf.RoundToInt(_hitPoint.x), transform.position.y, Mathf.RoundToInt(_hitPoint.z));
         //Debug.Log(centeredPos);
@@ -365,6 +409,10 @@ public class PlayerAttack : MonoBehaviour
                 if (canHeal)
                 {
                     FindObjectOfType<AudioManager>().Play("PinkSpell");
+                    #region particles
+                    Vector3 pos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
+                    FindObjectOfType<VFXManager>().Spawn("Heal", pos, 2f);
+                    #endregion
                     gameObject.GetComponent<PlayerHP>().Heal(healPoints);
                     attackBtn.SetActive(true);
 
@@ -416,7 +464,30 @@ public class PlayerAttack : MonoBehaviour
                 if (spl_selected.enable)
                 {
                     // stats
-                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    #region cooldown mask
+                    if (spl_selected.useSpellMaxCooldown <= 0)
+                    {
+                        RefreshSpellCdText(50);
+                    }
+                    else
+                    {
+                        float result = spl_selected.useSpellMaxCooldown - spl_selected.curUseSpellCooldown;
+                        if (result <= 0)
+                        {
+                            RefreshSpellCdText(0);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown)
+                        {
+                            RefreshSpellCdText(50);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        {
+                            RefreshSpellCdText(25);
+                        }
+                    }
+                    #endregion
+
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[0];
                     attackBtn.GetComponent<Image>().color = Color.green;
 
                     if (groundColor == "Green")
@@ -436,8 +507,9 @@ public class PlayerAttack : MonoBehaviour
                 }
                 else
                 {
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[0];
                     attackBtn.GetComponent<Image>().color = Color.grey;
-                    RefreshSpellCdText("x");
+                    RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
                     isPoisoned = false;
@@ -456,8 +528,32 @@ public class PlayerAttack : MonoBehaviour
                 if (spl_selected.enable)
                 {
                     // stats
-                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    #region cooldown mask
+                    if (spl_selected.useSpellMaxCooldown <= 0)
+                    {
+                        RefreshSpellCdText(50);
+                    }
+                    else
+                    {
+                        float result = spl_selected.useSpellMaxCooldown - spl_selected.curUseSpellCooldown;
+                        if (result <= 0)
+                        {
+                            RefreshSpellCdText(0);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown)
+                        {
+                            RefreshSpellCdText(50);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        {
+                            RefreshSpellCdText(25);
+                        }
+                    }
+                    #endregion
+
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[1];
                     attackBtn.GetComponent<Image>().color = Color.black;
+
                     damage = spl_Black.damage;
                     healPoints = spl_Black.healPoints;
                     isPoisoned = spl_Black._isPoisoned;
@@ -467,8 +563,9 @@ public class PlayerAttack : MonoBehaviour
                 }
                 else
                 {
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[1];
                     attackBtn.GetComponent<Image>().color = Color.grey;
-                    RefreshSpellCdText("x");
+                    RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
                     isPoisoned = false;
@@ -487,7 +584,30 @@ public class PlayerAttack : MonoBehaviour
                 if (spl_selected.enable)
                 {
                     // stats
-                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    #region cooldown mask
+                    if (spl_selected.useSpellMaxCooldown <= 0)
+                    {
+                        RefreshSpellCdText(50);
+                    }
+                    else
+                    {
+                        float result = spl_selected.useSpellMaxCooldown - spl_selected.curUseSpellCooldown;
+                        if (result <= 0)
+                        {
+                            RefreshSpellCdText(0);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown)
+                        {
+                            RefreshSpellCdText(50);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        {
+                            RefreshSpellCdText(25);
+                        }
+                    }
+                    #endregion
+
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[2];
                     attackBtn.GetComponent<Image>().color = Color.magenta;
                     damage = spl_Pink.damage;
 
@@ -507,8 +627,9 @@ public class PlayerAttack : MonoBehaviour
                 }
                 else
                 {
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[2];
                     attackBtn.GetComponent<Image>().color = Color.grey;
-                    RefreshSpellCdText("x");
+                    RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
                     isPoisoned = false;
@@ -527,7 +648,30 @@ public class PlayerAttack : MonoBehaviour
                 if (spl_selected.enable)
                 {
                     // stats
-                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    #region cooldown mask
+                    if (spl_selected.useSpellMaxCooldown <= 0)
+                    {
+                        RefreshSpellCdText(50);
+                    }
+                    else
+                    {
+                        float result = spl_selected.useSpellMaxCooldown - spl_selected.curUseSpellCooldown;
+                        if (result <= 0)
+                        {
+                            RefreshSpellCdText(0);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown)
+                        {
+                            RefreshSpellCdText(50);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        {
+                            RefreshSpellCdText(25);
+                        }
+                    }
+                    #endregion
+
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[3];
                     attackBtn.GetComponent<Image>().color = Color.yellow;
 
                     if (groundColor == "Yellow")
@@ -547,8 +691,9 @@ public class PlayerAttack : MonoBehaviour
                 }
                 else
                 {
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[3];
                     attackBtn.GetComponent<Image>().color = Color.grey;
-                    RefreshSpellCdText("x");
+                    RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
                     isPoisoned = false;
@@ -567,7 +712,30 @@ public class PlayerAttack : MonoBehaviour
                 if (spl_selected.enable)
                 {
                     // stats
-                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    #region cooldown mask
+                    if (spl_selected.useSpellMaxCooldown <= 0)
+                    {
+                        RefreshSpellCdText(50);
+                    }
+                    else
+                    {
+                        float result = spl_selected.useSpellMaxCooldown - spl_selected.curUseSpellCooldown;
+                        if (result <= 0)
+                        {
+                            RefreshSpellCdText(0);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown)
+                        {
+                            RefreshSpellCdText(50);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        {
+                            RefreshSpellCdText(25);
+                        }
+                    }
+                    #endregion
+
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[4];
                     attackBtn.GetComponent<Image>().color = Color.red;
 
                     if (groundColor == "Red")
@@ -587,8 +755,9 @@ public class PlayerAttack : MonoBehaviour
                 }
                 else
                 {
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[4];
                     attackBtn.GetComponent<Image>().color = Color.grey;
-                    RefreshSpellCdText("x");
+                    RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
                     isPoisoned = false;
@@ -607,7 +776,30 @@ public class PlayerAttack : MonoBehaviour
                 if (spl_selected.enable)
                 {
                     // stats
-                    RefreshSpellCdText(spl_selected.curUseSpellCooldown.ToString());
+                    #region cooldown mask
+                    if (spl_selected.useSpellMaxCooldown <= 0)
+                    {
+                        RefreshSpellCdText(50);
+                    }
+                    else
+                    {
+                        float result = spl_selected.useSpellMaxCooldown - spl_selected.curUseSpellCooldown;
+                        if (result <= 0)
+                        {
+                            RefreshSpellCdText(0);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown)
+                        {
+                            RefreshSpellCdText(50);
+                        }
+                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        {
+                            RefreshSpellCdText(25);
+                        }
+                    }
+                    #endregion
+
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[5];
                     attackBtn.GetComponent<Image>().color = Color.blue;
 
                     if (groundColor == "Blue")
@@ -627,8 +819,9 @@ public class PlayerAttack : MonoBehaviour
                 }
                 else
                 {
+                    attackBtn.GetComponent<Image>().sprite = spellSprites[5];
                     attackBtn.GetComponent<Image>().color = Color.grey;
-                    RefreshSpellCdText("x");
+                    RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
                     isPoisoned = false;
@@ -645,10 +838,10 @@ public class PlayerAttack : MonoBehaviour
     /// refresh the text on the attack button showing each cooldown for spells
     /// </summary>
     /// <param name="txt"></param>
-    private void RefreshSpellCdText(string txt)
+    private void RefreshSpellCdText(int value)
     {
-        if(spl_cooldownTxt != null)
-        spl_cooldownTxt.text = txt;
+        if(spl_cooldownMask != null)
+            spl_cooldownMask.padding = new Vector4(0, value, 0, 0);
     }
 
     /// <summary>
@@ -680,6 +873,19 @@ public class PlayerAttack : MonoBehaviour
                         Debug.Log(spells[i].name + " is disabled");
                     }
                 }
+            }
+        }
+    }
+
+    [HideInInspector] public bool canDecreaseCooldown = false;
+    private void DecreaseCooldown()
+    {
+        foreach (var spell in spells)
+        {
+            if (!spell.canUseSpell && spell.curUseSpellCooldown > 0)
+            {
+                spell.curUseSpellCooldown--;
+                //Debug.Log(spell.name + " " + spell.curUseSpellCooldown);
             }
         }
     }

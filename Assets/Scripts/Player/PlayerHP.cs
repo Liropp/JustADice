@@ -56,6 +56,10 @@ public class PlayerHP : MonoBehaviour
 
             if (curPoisonDuration == poisonDuration)
             {
+                #region particles
+                FindObjectOfType<VFXManager>().Spawn("Poison", this.transform.position, 2f);
+                #endregion
+
                 PlayerTakeDamage(poisonDamage, true);
 
                 curPoisonDuration++;

@@ -605,6 +605,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerGFX: {fileID: 623963283435147599}
+  myPS: {fileID: 0}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
@@ -644,6 +645,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBar: {fileID: 0}
   maxHP: 100
+  canTakeDamage: 1
   poisonDamage: 8
   maxPoisonDuration: 4
   NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -664,6 +666,9 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
+  whatToAttack:
+    serializedVersion: 2
+    m_Bits: 72
   spl_Green: {fileID: 11400000, guid: 94f288bbc12ab084f9b3be01d1bede1b, type: 2}
   spl_Black: {fileID: 11400000, guid: 3d626dfe13a670d4daed22fc3ed58c02, type: 2}
   spl_Pink: {fileID: 11400000, guid: a9817d878f537594a880f3a15d060fc3, type: 2}
@@ -671,6 +676,13 @@ MonoBehaviour:
   spl_Red: {fileID: 11400000, guid: 09f91b0c0fd794d46aa6a1648d23f7df, type: 2}
   spl_Blue: {fileID: 11400000, guid: 1bb75bc3656665042a013169ab03a226, type: 2}
   spl_cooldownTxt: {fileID: 0}
+  spellSprites:
+  - {fileID: 21300000, guid: 82b9c441bedca7b43a50471209b5a207, type: 3}
+  - {fileID: 21300000, guid: 766872bc2c788b34f8b218ee14147400, type: 3}
+  - {fileID: 21300000, guid: bc7f642664a24db48959efca83224dd2, type: 3}
+  - {fileID: 21300000, guid: 23ce223e28f4da44cb1ea4ebd28b201f, type: 3}
+  - {fileID: 21300000, guid: e0b1bfa3ad86ebb4d9824d2d200471b7, type: 3}
+  - {fileID: 21300000, guid: 81f6474685daf124f9de7b72847b1c06, type: 3}
 --- !u!1 &623963283435147599
 GameObject:
   m_ObjectHideFlags: 0

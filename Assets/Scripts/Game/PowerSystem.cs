@@ -18,26 +18,37 @@ public class PowerSystem : MonoBehaviour
     private bool isInv = false;
     [SerializeField] private GameObject colors;
     [SerializeField] private Transform playerGFX;
+    [SerializeField] private LayerMask whatToAttack;
+    [SerializeField] private Button powerBtn;
+    [SerializeField] private Sprite[] sprites;
 
     private void Start()
     {
         powerName.text = "Nothing";
+        powerBtn.GetComponent<Image>().sprite = sprites[4];
+        powerBtn.GetComponent<Image>().color = Color.magenta;
         currPowerBtn = this.gameObject;
         colors.SetActive(false);
+        owner = playerGFX.transform.parent.gameObject;
     }
 
     public void UsePower()
     {
-        if (_powerIndex <= 0)
+        if (owner.GetComponent<PlayerController>().GetcanMove() && owner.GetComponent<PlayerAttack>().attackBtn.activeSelf)
         {
-            //Debug.Log("NO POWER");
-            powerName.text = "Nothing";
-        }
-        else
-        {
-            //Debug.Log("USE POWER : " + _powerIndex + "!");
-            currPowerBtn.GetComponent<Image>().enabled = false;
-            usingPower = true;
+            if (_powerIndex <= 0)
+            {
+                //Debug.Log("NO POWER");
+                powerName.text = "Nothing";
+                powerBtn.GetComponent<Image>().sprite = sprites[4];
+                powerBtn.GetComponent<Image>().color = Color.magenta;
+            }
+            else
+            {
+                //Debug.Log("USE POWER : " + _powerIndex + "!");
+                currPowerBtn.GetComponent<Image>().enabled = false;
+                usingPower = true;
+            }
         }
     }
 
@@ -45,31 +56,27 @@ public class PowerSystem : MonoBehaviour
     {
         if (usingPower && Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if(_powerIndex != 3 && _powerIndex != 4)
+            if(_powerIndex == 1 || _powerIndex == 2)
             {
                 // Raycast to detect the gameObject at the mouse position
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit))
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, whatToAttack))
                 {
                     // An object is hit
                     GameObject hitObject = hit.collider.gameObject;
+                    //Debug.Log("hitObject : " + hitObject);
+                    //Debug.Log("owner : " + owner);
 
-                    switch (_powerIndex)
+                    if (hitObject.CompareTag("Player") && hitObject != owner || hitObject.CompareTag("Enemy"))
                     {
-                        case 1:
-                            if (hitObject.CompareTag("Player") || hitObject.CompareTag("Enemy") && hitObject != owner)
-                            {
-                                Fireball(hitObject);
-                            }
-                            break;
-                        case 2:
-                            if (hitObject.layer == 3)
-                            {
-                                CursedGround(hitObject);
-                            }
-                            break;
+                        Fireball(hitObject);
+                    }
+
+                    if (hitObject.layer == 3)
+                    {
+                        CursedGround(hitObject);
                     }
                 }
             }
@@ -90,14 +97,20 @@ public class PowerSystem : MonoBehaviour
 
         if (isInv)
         {
-            if (FindObjectOfType<GameManager>().GetTurnCount() == invEndTurn)
+            if (FindObjectOfType<GameManager>().GetTurnCount() >= invEndTurn)
             {
                 owner.GetComponent<PlayerHP>().canTakeDamage = true;
 
                 currPowerBtn.GetComponent<Image>().enabled = true;
                 _powerIndex = 0;
                 powerName.text = "Nothing";
+                powerBtn.GetComponent<Image>().sprite = sprites[4];
+                powerBtn.GetComponent<Image>().color = Color.magenta;
                 usingPower = false;
+
+                #region particles
+                FindObjectOfType<VFXManager>().DestroySpawnInstance();
+                #endregion
 
                 Debug.Log("VINCIBLE");
                 isInv = false;
@@ -115,32 +128,45 @@ public class PowerSystem : MonoBehaviour
         {
             case 1:
                 powerName.text = "Fireball";
+                powerBtn.GetComponent<Image>().sprite = sprites[0];
+                powerBtn.GetComponent<Image>().color = Color.magenta;
+
                 break;
             case 2:
                 powerName.text = "Cursed ground";
+                powerBtn.GetComponent<Image>().sprite = sprites[1];
+                powerBtn.GetComponent<Image>().color = Color.white;
+
                 break;
             case 3:
                 powerName.text = "Invincible";
+                powerBtn.GetComponent<Image>().sprite = sprites[2];
+                powerBtn.GetComponent<Image>().color = Color.white;
+
                 break;
             case 4:
-                powerName.text = "Chains";
-                break;
-            case 5:
                 powerName.text = "Choose a color";
-                break;
-            case 6:
-                powerName.text = "Swap";
+                powerBtn.GetComponent<Image>().sprite = sprites[3];
+                powerBtn.GetComponent<Image>().color = Color.white;
+
                 break;
         }
     }
 
     private void Fireball(GameObject target)
     {
+        #region particles
+        Vector3 endPos = target.transform.position;
+        FindObjectOfType<VFXManager>().SpawnMoving("FireBall", owner.transform.position, endPos);
+        #endregion
+
         if (target.CompareTag("Player"))
         {
             target.GetComponent<PlayerHP>().PlayerTakeDamage(30, false);
             _powerIndex = 0;
             powerName.text = "Nothing";
+            powerBtn.GetComponent<Image>().sprite = sprites[4];
+            powerBtn.GetComponent<Image>().color = Color.magenta;
             currPowerBtn.GetComponent<Image>().enabled = true;
             usingPower = false;
         }
@@ -150,6 +176,8 @@ public class PowerSystem : MonoBehaviour
             target.GetComponent<EnemyStats>().TakeDamage(30, false);
             _powerIndex = 0;
             powerName.text = "Nothing";
+            powerBtn.GetComponent<Image>().sprite = sprites[4];
+            powerBtn.GetComponent<Image>().color = Color.magenta;
             currPowerBtn.GetComponent<Image>().enabled = true;
             usingPower = false;
         }
@@ -167,6 +195,8 @@ public class PowerSystem : MonoBehaviour
         {
             _powerIndex = 0;
             powerName.text = "Nothing";
+            powerBtn.GetComponent<Image>().sprite = sprites[4];
+            powerBtn.GetComponent<Image>().color = Color.magenta;
             usingPower = false;
             cgCount = 3;
         }
@@ -174,13 +204,23 @@ public class PowerSystem : MonoBehaviour
 
     private void Invincible()
     {
-        if(invEndTurn == 0)
-        invEndTurn = FindObjectOfType<GameManager>().GetTurnCount() + 1;
+        if(owner != null)
+        {
+            if (invEndTurn == 0)
+            {
+                invEndTurn = FindObjectOfType<GameManager>().GetTurnCount() + 1;
 
-        owner.GetComponent<PlayerHP>().canTakeDamage = false;
-        isInv = true;
+                #region particles
+                FindObjectOfType<VFXManager>().Spawn("Shield", owner.transform.position, 9999f);
+                FindObjectOfType<VFXManager>().SetParentSpawnInstance(owner.transform);
+                #endregion
+            }
 
-        Debug.Log("INVINCIBLE");
+            owner.GetComponent<PlayerHP>().canTakeDamage = false;
+            isInv = true;
+
+            Debug.Log("INVINCIBLE");
+        }
     }
 
     private void ChangeColor()
@@ -216,6 +256,8 @@ public class PowerSystem : MonoBehaviour
         colors.SetActive(false);
         _powerIndex = 0;
         powerName.text = "Nothing";
+        powerBtn.GetComponent<Image>().sprite = sprites[4];
+        powerBtn.GetComponent<Image>().color = Color.magenta;
         currPowerBtn.GetComponent<Image>().enabled = true;
         usingPower = false;
     }

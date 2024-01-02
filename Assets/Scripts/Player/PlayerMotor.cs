@@ -18,6 +18,9 @@ public class PlayerMotor : MonoBehaviour
     //Rotation : End rotation
     private Quaternion rotEnd;
 
+    private int multi_moveMaxPerTurn = 3;
+    [HideInInspector] public int multi_movePerTurn = 0;
+
     private void Awake()
     {
         // Reset
@@ -49,8 +52,23 @@ public class PlayerMotor : MonoBehaviour
             t = 0.0f;
 
             // End turn
-            if(!playerController.isTuto)
-            playerController.SetcanMove(false);
+            if (!playerController.isTuto)
+            {
+                if (FindObjectOfType<GameManager>().isMulti)
+                {
+                    multi_movePerTurn++;
+                    //Debug.Log(multi_movePerTurn + "/" + multi_moveMaxPerTurn);
+
+                    if (multi_movePerTurn >= multi_moveMaxPerTurn)
+                    {
+                        playerController.SetcanMove(false);
+                    }
+                }
+                else
+                {
+                    playerController.SetcanMove(false);
+                }
+            }
         }
     }
 
