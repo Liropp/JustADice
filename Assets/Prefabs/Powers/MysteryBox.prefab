@@ -113,6 +113,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerIndex: 2
   isRandom: 0
+  canRespawn: 0
 --- !u!1 &6377830913889124730
 GameObject:
   m_ObjectHideFlags: 0

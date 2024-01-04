@@ -16,6 +16,9 @@ public class WinZone : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
 
+        // this make the player return right at the levels menu, and not to the main menu, before.
+        PlayerPrefs.SetInt("Story", 1);
+
         FindObjectOfType<InGameMenu>().PlayerWon();
     }
 }

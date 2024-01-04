@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (transform.position.y < 0)
+        if (transform.position.y <= -4.25f)
         {
             gameObject.SetActive(false);
             //Debug.Log("is falling");
@@ -236,8 +236,8 @@ public class PlayerController : MonoBehaviour
     public string DiceUpColor()
     {
         RaycastHit hitColor;
-        //Debug.DrawRay(transform.position, Vector3.up * 1f, Color.red, 3f);
-        if (Physics.Raycast(transform.position, Vector3.up, out hitColor, 1f, whatIsDiceSide))
+        //Debug.DrawRay(this.transform.position, Vector3.up * 1f, Color.red, 3f);
+        if (Physics.Raycast(this.transform.position, Vector3.up, out hitColor, 1f, whatIsDiceSide))
         {
             //Debug.Log("Up color = " + hitColor.collider.gameObject.name);
             return hitColor.collider.gameObject.name;

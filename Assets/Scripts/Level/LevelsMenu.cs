@@ -19,12 +19,15 @@ public class LevelsMenu : MonoBehaviour
             //Debug.Log("lvl" + num + "is done ?");
             if (PlayerPrefs.GetString("lvl" + num) == "done")
             {
-                buttons[i].GetComponent<Button>().interactable = false;
                 buttons[i].GetComponent<Image>().color = Color.green;
+                buttons[i].GetComponent<Button>().interactable = true;
+                if(i + 1 <= buttons.Count-1)
+                {
+                    buttons[i + 1].GetComponent<Button>().interactable = true;
+                }
             }
             else
             {
-                buttons[i].GetComponent<Button>().interactable = true;
                 buttons[i].GetComponent<Image>().color = Color.white;
             }
         }

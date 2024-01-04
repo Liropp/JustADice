@@ -55,11 +55,6 @@ public class VFXManager : MonoBehaviour
         canMove = true;
     }
 
-    public void DestroySpawnInstance()
-    {
-        Destroy(spawnInstance);
-    }
-
     public void SetParentSpawnInstance(Transform parent)
     {
         spawnInstance.transform.SetParent(parent);

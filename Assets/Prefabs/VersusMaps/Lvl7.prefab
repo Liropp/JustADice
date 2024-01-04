@@ -17047,8 +17047,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
+      propertyPath: canRespawn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
       propertyPath: powerIndex
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
+      propertyPath: respawnMaxCooldown
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974933, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
@@ -17132,8 +17142,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
+      propertyPath: canRespawn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
       propertyPath: powerIndex
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
+      propertyPath: respawnMaxCooldown
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974933, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
@@ -17217,8 +17237,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
+      propertyPath: canRespawn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
       propertyPath: powerIndex
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
+      propertyPath: respawnMaxCooldown
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974933, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
@@ -17302,8 +17332,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
+      propertyPath: canRespawn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
       propertyPath: powerIndex
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
+      propertyPath: respawnMaxCooldown
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974933, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}

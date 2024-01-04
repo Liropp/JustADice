@@ -31,17 +31,20 @@ public class GameManager : MonoBehaviour
     [Header("Win")]
     [SerializeField] private GameObject endUI;
     [SerializeField] private GameObject winBtn;
-    private TextMeshProUGUI endTxt;
+    [SerializeField] private TextMeshProUGUI endTxt;
+
+    [Header("Solo")]
+    public bool isSolo = false;
+    public bool canRevive = false;
 
     private void Start()
     {
         pawnPlayed = new UnityEvent();
         pawnPlayed.AddListener(Played);
-        endTxt = endUI.GetComponent<TextMeshProUGUI>();
         endUI.SetActive(false);
 
         malusCount = 0;
-        if (!isMulti)
+        if (!isMulti && !isSolo)
         {
             PlayerMalus();
         }
@@ -51,23 +54,30 @@ public class GameManager : MonoBehaviour
     {
         Turns();
 
-        if (!isMulti)
+        if (!canRevive)
         {
-            if (!player.activeSelf)
+            if (!isMulti)
             {
-                AIWin();
+                if (!player.activeSelf)
+                {
+                    AIWin();
+                }
+                else if (pawns.Count <= 1)
+                {
+                    PlayerWin();
+                }
             }
-            else if (pawns.Count <= 1)
+            else
             {
-                PlayerWin();
+                if (pawns.Count <= 1)
+                {
+                    ThisPlayerWin();
+                }
             }
         }
         else
         {
-            if (pawns.Count <= 1)
-            {
-                ThisPlayerWin();
-            }
+            Revive();
         }
     }
 
@@ -257,8 +267,18 @@ public class GameManager : MonoBehaviour
             endUI.SetActive(true);
         }
 
-        winBtn.GetComponent<Button>().interactable = true;
+        if (!isSolo)
+        {
+            winBtn.GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            winBtn.GetComponent<Button>().interactable = false;
+        }
         endTxt.text = "Player win!";
+
+        // this make the player return right at the levels menu, and not to the main menu, before.
+        PlayerPrefs.SetInt("Story", 1);
     }
 
     /// <summary>
@@ -272,7 +292,9 @@ public class GameManager : MonoBehaviour
             endUI.SetActive(true);
         }
 
-        winBtn.GetComponent<Button>().interactable = true;
+        if(!isSolo)
+        winBtn.GetComponent<Button>().interactable = false;
+
         endTxt.text = "AI win.";
     }
 
@@ -289,6 +311,20 @@ public class GameManager : MonoBehaviour
 
         winBtn.GetComponent<Button>().interactable = true;
         endTxt.text = pawns[0].gameObject.name + " win!";
+
+        PlayerPrefs.SetInt("Story", 0);
+    }
+
+    /// <summary>
+    /// Player can revive and continue playing / increasing his score
+    /// </summary>
+    private void Revive()
+    {
+        player.GetComponent<PlayerHP>().Heal(100);
+        player.SetActive(true);
+        curIndexTurn = 0;
+        endUI.SetActive(false);
+        canRevive = false;
     }
 
     public int GetTurnCount()
@@ -299,5 +335,10 @@ public class GameManager : MonoBehaviour
     public GameObject GetCurrPawnPlaying()
     {
         return currPawnPlaying;
+    }
+
+    public void NewPawn(GameObject pawn)
+    {
+        pawns.Add(pawn);
     }
 }

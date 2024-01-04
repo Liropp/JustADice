@@ -27,7 +27,7 @@ public class EnemyStats : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private Canvas _canvas;
-    [SerializeField] private Transform cameraDir;
+    public Transform cameraDir;
 
     private EnemyBase enemyBase;
 

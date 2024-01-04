@@ -13,7 +13,7 @@ public class CursedBlock : MonoBehaviour
         {
             if(hit.collider.gameObject.CompareTag("Player"))
             {
-                hit.collider.gameObject.transform.position = transform.position;
+                hit.collider.gameObject.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
                 Destroy(this.gameObject);
             }
         }

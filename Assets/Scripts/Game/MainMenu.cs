@@ -6,21 +6,56 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject levelsMenu;
+    [SerializeField] private GameObject versusMenu;
+    [SerializeField] private GameObject soloMenu;
 
     private void Start()
     {
-        mainMenu.SetActive(true);
-        levelsMenu.SetActive(false);
+        if (PlayerPrefs.GetInt("Story", 0) == 1)
+        {
+            Story();
+        }
+        else
+        {
+            mainMenu.SetActive(true);
+            levelsMenu.SetActive(false);
+            versusMenu.SetActive(false);
+            soloMenu.SetActive(false);
+        }
     }
 
-    public void Play()
+    public void Story()
     {
         mainMenu.SetActive(false);
+        versusMenu.SetActive(false);
+        soloMenu.SetActive(false);
         levelsMenu.SetActive(true);
+    }
+
+    public void Versus()
+    {
+        PlayerPrefs.SetInt("Story", 0);
+
+        mainMenu.SetActive(false);
+        levelsMenu.SetActive(false);
+        soloMenu.SetActive(false);
+        versusMenu.SetActive(true);
+    }
+
+    public void Solo()
+    {
+        PlayerPrefs.SetInt("Story", 0);
+
+        mainMenu.SetActive(false);
+        levelsMenu.SetActive(false);
+        versusMenu.SetActive(false);
+        soloMenu.SetActive(true);
     }
 
     public void Quit()
     {
+        PlayerPrefs.SetInt("Story", 0);
+
         Application.Quit();
     }
 }

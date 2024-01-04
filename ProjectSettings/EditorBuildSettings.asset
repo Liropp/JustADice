@@ -41,6 +41,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Versus.unity
     guid: d0b12a5a699fbb549b1002c7cab7ff4a
+  - enabled: 1
+    path: Assets/Scenes/Solo.unity
+    guid: 400e6943624d2b64694f0343a64ddbb1
   m_configObjects:
     com.unity.adaptiveperformance.google.android.provider_settings: {fileID: 11400000,
       guid: 2d62dd78f97d51441aab7e55df997c37, type: 2}

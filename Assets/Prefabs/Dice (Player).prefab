@@ -631,6 +631,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotSpeed: 4
   rotCooldown: 1
+  multi_movePerTurn: 0
 --- !u!114 &623963283201840363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -663,6 +664,79 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackBtn: {fileID: 0}
+  spl_objects:
+  - name: Black
+    damage: 0
+    healPoints: 0
+    _isPoisoned: 0
+    _isDistantAttack: 0
+    _canTeleport: 1
+    _canHeal: 0
+    canUseSpell: 0
+    curUseSpellCooldown: 0
+    useSpellMaxCooldown: 10
+    enable: 1
+    description: TP attack // big cooldown
+  - name: Blue
+    damage: 10
+    healPoints: 0
+    _isPoisoned: 0
+    _isDistantAttack: 0
+    _canTeleport: 0
+    _canHeal: 0
+    canUseSpell: 0
+    curUseSpellCooldown: 0
+    useSpellMaxCooldown: 0
+    enable: 1
+    description: Basic attack // no cooldown
+  - name: Green
+    damage: 5
+    healPoints: 0
+    _isPoisoned: 1
+    _isDistantAttack: 0
+    _canTeleport: 0
+    _canHeal: 0
+    canUseSpell: 0
+    curUseSpellCooldown: 0
+    useSpellMaxCooldown: 5
+    enable: 1
+    description: Poison attack // med cooldown
+  - name: Pink
+    damage: 0
+    healPoints: 30
+    _isPoisoned: 0
+    _isDistantAttack: 0
+    _canTeleport: 0
+    _canHeal: 1
+    canUseSpell: 0
+    curUseSpellCooldown: 0
+    useSpellMaxCooldown: 5
+    enable: 1
+    description: Heal spell  // med cooldown
+  - name: Red
+    damage: 25
+    healPoints: 0
+    _isPoisoned: 0
+    _isDistantAttack: 0
+    _canTeleport: 0
+    _canHeal: 0
+    canUseSpell: 0
+    curUseSpellCooldown: 0
+    useSpellMaxCooldown: 10
+    enable: 1
+    description: Ultime attack // big cooldown
+  - name: Yellow
+    damage: 6
+    healPoints: 0
+    _isPoisoned: 0
+    _isDistantAttack: 1
+    _canTeleport: 0
+    _canHeal: 0
+    canUseSpell: 0
+    curUseSpellCooldown: 0
+    useSpellMaxCooldown: 0
+    enable: 1
+    description: Distant attack // no cooldown
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
@@ -675,7 +749,8 @@ MonoBehaviour:
   spl_Yellow: {fileID: 11400000, guid: fb7135a59c2fbb14b835272ef373ca70, type: 2}
   spl_Red: {fileID: 11400000, guid: 09f91b0c0fd794d46aa6a1648d23f7df, type: 2}
   spl_Blue: {fileID: 11400000, guid: 1bb75bc3656665042a013169ab03a226, type: 2}
-  spl_cooldownTxt: {fileID: 0}
+  spl_cooldownMask: {fileID: 0}
+  spl_Lock: {fileID: 0}
   spellSprites:
   - {fileID: 21300000, guid: 82b9c441bedca7b43a50471209b5a207, type: 3}
   - {fileID: 21300000, guid: 766872bc2c788b34f8b218ee14147400, type: 3}
@@ -683,6 +758,28 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 23ce223e28f4da44cb1ea4ebd28b201f, type: 3}
   - {fileID: 21300000, guid: e0b1bfa3ad86ebb4d9824d2d200471b7, type: 3}
   - {fileID: 21300000, guid: 81f6474685daf124f9de7b72847b1c06, type: 3}
+  spl_MeshRs:
+  - {fileID: 623963283588763327}
+  - {fileID: 623963282383514384}
+  - {fileID: 623963282913207664}
+  - {fileID: 623963282744452960}
+  - {fileID: 623963281965387782}
+  - {fileID: 623963282599518017}
+  spl_MatUnlocked:
+  - {fileID: 2100000, guid: f65ba079724495a44816316b7d7d66d2, type: 2}
+  - {fileID: 2100000, guid: 6142290997b5cdd45bb09c2685b26ea8, type: 2}
+  - {fileID: 2100000, guid: 30c008d7deb278249af9e2f64e81d512, type: 2}
+  - {fileID: 2100000, guid: ceb9d64e1d190d349942bd6aef456406, type: 2}
+  - {fileID: 2100000, guid: 6d0c0541d890ed54289f50bc23e9e05c, type: 2}
+  - {fileID: 2100000, guid: 420253ffcbd293b41bb593a0fda3f2a7, type: 2}
+  spl_MatLocked:
+  - {fileID: 2100000, guid: ee4fa6c2d0c6e8345a6964a2a535bba9, type: 2}
+  - {fileID: 2100000, guid: de1ff516ea71cf243883a89ae347aefb, type: 2}
+  - {fileID: 2100000, guid: 9ca8af52094137a4e92832958570daaa, type: 2}
+  - {fileID: 2100000, guid: e6b6b00eb6266e54c819b12f77d5dd0b, type: 2}
+  - {fileID: 2100000, guid: 8f28a9263169d6641a9960828777dc6e, type: 2}
+  - {fileID: 2100000, guid: fd9cc6385b0d1ed4faa0db3053eec455, type: 2}
+  canDecreaseCooldown: 0
 --- !u!1 &623963283435147599
 GameObject:
   m_ObjectHideFlags: 0

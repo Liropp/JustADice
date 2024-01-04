@@ -21,37 +21,27 @@ public class PlayerAttack : MonoBehaviour
     public GameObject attackBtn;
 
     [Header("Spells")]
+    [SerializeField] private Spell_Object[] spl_objects;
     [SerializeField] LayerMask whatIsGround;
     [SerializeField] LayerMask whatToAttack;
-    [SerializeField] private Spell spl_Green;
-    [SerializeField] private Spell spl_Black;
-    [SerializeField] private Spell spl_Pink;
-    [SerializeField] private Spell spl_Yellow;
-    [SerializeField] private Spell spl_Red;
-    [SerializeField] private Spell spl_Blue;
     [SerializeField] private RectMask2D spl_cooldownMask;
+    [SerializeField] private GameObject spl_Lock;
     [SerializeField] private Sprite[] spellSprites;
+    [SerializeField] private MeshRenderer[] spl_MeshRs;
+    [SerializeField] private Material[] spl_MatUnlocked;
+    [SerializeField] private Material[] spl_MatLocked;
     private bool enemyAround = false;
     private bool isDistantAttack = false;
     private bool canTeleport = false;
     private bool canHeal = false;
-    private Spell spl_selected;
-    private List<Spell> spells;
+    private Spell_Object spl_selected;
     string groundColor;
 
     private void Awake()
     {
         playerController = gameObject.GetComponent<PlayerController>();
-        spells = new List<Spell>();
 
-        spells.Add(spl_Green);
-        spells.Add(spl_Black);
-        spells.Add(spl_Pink);
-        spells.Add(spl_Yellow);
-        spells.Add(spl_Red);
-        spells.Add(spl_Blue);
-
-        foreach (var spell in spells)
+        foreach (var spell in spl_objects)
         {
             spell.curUseSpellCooldown = 0;
             spell.canUseSpell = true;
@@ -398,6 +388,11 @@ public class PlayerAttack : MonoBehaviour
     /// </summary>
     public void Attack()
     {
+        Debug.Log("spl_selected.canUseSpell : " + spl_selected.canUseSpell);
+        Debug.Log("spl_selected.curUseSpellCooldown : " + spl_selected.curUseSpellCooldown);
+
+        //Debug.Log("spl_selected.canUseSpell " + spl_selected.canUseSpell);
+        //Debug.Log("spl_selected.enable " + spl_selected.enable);
         if (spl_selected.canUseSpell && spl_selected.enable)
         {
             // only if there is an enemy next to player
@@ -459,7 +454,7 @@ public class PlayerAttack : MonoBehaviour
                 //Debug.Log("Poison");
 
                 // ref
-                spl_selected = spl_Green;
+                spl_selected = spl_objects[2];
 
                 if (spl_selected.enable)
                 {
@@ -480,7 +475,7 @@ public class PlayerAttack : MonoBehaviour
                         {
                             RefreshSpellCdText(50);
                         }
-                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        else
                         {
                             RefreshSpellCdText(25);
                         }
@@ -489,26 +484,30 @@ public class PlayerAttack : MonoBehaviour
 
                     attackBtn.GetComponent<Image>().sprite = spellSprites[0];
                     attackBtn.GetComponent<Image>().color = Color.green;
+                    spl_Lock.SetActive(false);
+                    spl_MeshRs[0].material = spl_MatUnlocked[0];
 
                     if (groundColor == "Green")
                     {
-                        damage = spl_Green.damage * 2;
+                        damage = spl_objects[2].damage * 2;
                     }
                     else
                     {
-                        damage = spl_Green.damage;
+                        damage = spl_objects[2].damage;
                     }
 
-                    healPoints = spl_Green.healPoints;
-                    isPoisoned = spl_Green._isPoisoned;
-                    isDistantAttack = spl_Green._isDistantAttack;
-                    canTeleport = spl_Green._canTeleport;
-                    canHeal = spl_Green._canHeal;
+                    healPoints = spl_objects[2].healPoints;
+                    isPoisoned = spl_objects[2]._isPoisoned;
+                    isDistantAttack = spl_objects[2]._isDistantAttack;
+                    canTeleport = spl_objects[2]._canTeleport;
+                    canHeal = spl_objects[2]._canHeal;
                 }
                 else
                 {
                     attackBtn.GetComponent<Image>().sprite = spellSprites[0];
                     attackBtn.GetComponent<Image>().color = Color.grey;
+                    spl_Lock.SetActive(true);
+                    spl_MeshRs[0].material = spl_MatLocked[0];
                     RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
@@ -520,10 +519,10 @@ public class PlayerAttack : MonoBehaviour
 
                 break;
             case "Black":
-                //Debug.Log("Black Hole");
+                //Debug.Log("TP");
 
                 // ref
-                spl_selected = spl_Black;
+                spl_selected = spl_objects[0];
 
                 if (spl_selected.enable)
                 {
@@ -544,7 +543,7 @@ public class PlayerAttack : MonoBehaviour
                         {
                             RefreshSpellCdText(50);
                         }
-                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        else
                         {
                             RefreshSpellCdText(25);
                         }
@@ -553,18 +552,22 @@ public class PlayerAttack : MonoBehaviour
 
                     attackBtn.GetComponent<Image>().sprite = spellSprites[1];
                     attackBtn.GetComponent<Image>().color = Color.black;
+                    spl_Lock.SetActive(false);
+                    spl_MeshRs[1].material = spl_MatUnlocked[1];
 
-                    damage = spl_Black.damage;
-                    healPoints = spl_Black.healPoints;
-                    isPoisoned = spl_Black._isPoisoned;
-                    isDistantAttack = spl_Black._isDistantAttack;
-                    canTeleport = spl_Black._canTeleport;
-                    canHeal = spl_Black._canHeal;
+                    damage = spl_objects[0].damage;
+                    healPoints = spl_objects[0].healPoints;
+                    isPoisoned = spl_objects[0]._isPoisoned;
+                    isDistantAttack = spl_objects[0]._isDistantAttack;
+                    canTeleport = spl_objects[0]._canTeleport;
+                    canHeal = spl_objects[0]._canHeal;
                 }
                 else
                 {
                     attackBtn.GetComponent<Image>().sprite = spellSprites[1];
                     attackBtn.GetComponent<Image>().color = Color.grey;
+                    spl_Lock.SetActive(true);
+                    spl_MeshRs[1].material = spl_MatLocked[1];
                     RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
@@ -579,7 +582,7 @@ public class PlayerAttack : MonoBehaviour
                 //Debug.Log("Heal");
 
                 // ref
-                spl_selected = spl_Pink;
+                spl_selected = spl_objects[3];
 
                 if (spl_selected.enable)
                 {
@@ -587,6 +590,7 @@ public class PlayerAttack : MonoBehaviour
                     #region cooldown mask
                     if (spl_selected.useSpellMaxCooldown <= 0)
                     {
+                        Debug.Log("no cooldown");
                         RefreshSpellCdText(50);
                     }
                     else
@@ -594,13 +598,15 @@ public class PlayerAttack : MonoBehaviour
                         float result = spl_selected.useSpellMaxCooldown - spl_selected.curUseSpellCooldown;
                         if (result <= 0)
                         {
+                            Debug.Log("cooldown start");
+
                             RefreshSpellCdText(0);
                         }
                         else if (result >= spl_selected.useSpellMaxCooldown)
                         {
                             RefreshSpellCdText(50);
                         }
-                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        else
                         {
                             RefreshSpellCdText(25);
                         }
@@ -609,26 +615,31 @@ public class PlayerAttack : MonoBehaviour
 
                     attackBtn.GetComponent<Image>().sprite = spellSprites[2];
                     attackBtn.GetComponent<Image>().color = Color.magenta;
-                    damage = spl_Pink.damage;
+                    spl_Lock.SetActive(false);
+                    spl_MeshRs[2].material = spl_MatUnlocked[2];
+
+                    damage = spl_objects[3].damage;
 
                     if (groundColor == "Pink")
                     {
-                        healPoints = spl_Pink.healPoints * 2;
+                        healPoints = spl_objects[3].healPoints * 2;
                     }
                     else
                     {
-                        healPoints = spl_Pink.healPoints;
+                        healPoints = spl_objects[3].healPoints;
                     }
 
-                    isPoisoned = spl_Pink._isPoisoned;
-                    isDistantAttack = spl_Pink._isDistantAttack;
-                    canTeleport = spl_Pink._canTeleport;
-                    canHeal = spl_Pink._canHeal;
+                    isPoisoned = spl_objects[3]._isPoisoned;
+                    isDistantAttack = spl_objects[3]._isDistantAttack;
+                    canTeleport = spl_objects[3]._canTeleport;
+                    canHeal = spl_objects[3]._canHeal;
                 }
                 else
                 {
                     attackBtn.GetComponent<Image>().sprite = spellSprites[2];
                     attackBtn.GetComponent<Image>().color = Color.grey;
+                    spl_Lock.SetActive(true);
+                    spl_MeshRs[2].material = spl_MatLocked[2];
                     RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
@@ -643,7 +654,7 @@ public class PlayerAttack : MonoBehaviour
                 //Debug.Log("Bow");
 
                 // ref
-                spl_selected = spl_Yellow;
+                spl_selected = spl_objects[5];
 
                 if (spl_selected.enable)
                 {
@@ -664,7 +675,7 @@ public class PlayerAttack : MonoBehaviour
                         {
                             RefreshSpellCdText(50);
                         }
-                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        else
                         {
                             RefreshSpellCdText(25);
                         }
@@ -673,26 +684,30 @@ public class PlayerAttack : MonoBehaviour
 
                     attackBtn.GetComponent<Image>().sprite = spellSprites[3];
                     attackBtn.GetComponent<Image>().color = Color.yellow;
+                    spl_Lock.SetActive(false);
+                    spl_MeshRs[3].material = spl_MatUnlocked[3];
 
                     if (groundColor == "Yellow")
                     {
-                        damage = spl_Yellow.damage * 3;
+                        damage = spl_objects[5].damage * 3;
                     }
                     else
                     {
-                        damage = spl_Yellow.damage;
+                        damage = spl_objects[5].damage;
                     }
 
-                    healPoints = spl_Yellow.healPoints;
-                    isPoisoned = spl_Yellow._isPoisoned;
-                    isDistantAttack = spl_Yellow._isDistantAttack;
-                    canTeleport = spl_Yellow._canTeleport;
-                    canHeal = spl_Yellow._canHeal;
+                    healPoints = spl_objects[5].healPoints;
+                    isPoisoned = spl_objects[5]._isPoisoned;
+                    isDistantAttack = spl_objects[5]._isDistantAttack;
+                    canTeleport = spl_objects[5]._canTeleport;
+                    canHeal = spl_objects[5]._canHeal;
                 }
                 else
                 {
                     attackBtn.GetComponent<Image>().sprite = spellSprites[3];
                     attackBtn.GetComponent<Image>().color = Color.grey;
+                    spl_Lock.SetActive(true);
+                    spl_MeshRs[3].material = spl_MatLocked[3];
                     RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
@@ -707,7 +722,7 @@ public class PlayerAttack : MonoBehaviour
                 //Debug.Log("Ultime");
 
                 // ref
-                spl_selected = spl_Red;
+                spl_selected = spl_objects[4];
 
                 if (spl_selected.enable)
                 {
@@ -728,7 +743,7 @@ public class PlayerAttack : MonoBehaviour
                         {
                             RefreshSpellCdText(50);
                         }
-                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        else
                         {
                             RefreshSpellCdText(25);
                         }
@@ -737,26 +752,30 @@ public class PlayerAttack : MonoBehaviour
 
                     attackBtn.GetComponent<Image>().sprite = spellSprites[4];
                     attackBtn.GetComponent<Image>().color = Color.red;
+                    spl_Lock.SetActive(false);
+                    spl_MeshRs[4].material = spl_MatUnlocked[4];
 
                     if (groundColor == "Red")
                     {
-                        damage = spl_Red.damage * 2;
+                        damage = spl_objects[4].damage * 2;
                     }
                     else
                     {
-                        damage = spl_Red.damage;
+                        damage = spl_objects[4].damage;
                     }
 
-                    healPoints = spl_Red.healPoints;
-                    isPoisoned = spl_Red._isPoisoned;
-                    isDistantAttack = spl_Red._isDistantAttack;
-                    canTeleport = spl_Red._canTeleport;
-                    canHeal = spl_Red._canHeal;
+                    healPoints = spl_objects[4].healPoints;
+                    isPoisoned = spl_objects[4]._isPoisoned;
+                    isDistantAttack = spl_objects[4]._isDistantAttack;
+                    canTeleport = spl_objects[4]._canTeleport;
+                    canHeal = spl_objects[4]._canHeal;
                 }
                 else
                 {
                     attackBtn.GetComponent<Image>().sprite = spellSprites[4];
                     attackBtn.GetComponent<Image>().color = Color.grey;
+                    spl_Lock.SetActive(true);
+                    spl_MeshRs[4].material = spl_MatLocked[4];
                     RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
@@ -771,7 +790,7 @@ public class PlayerAttack : MonoBehaviour
                 //Debug.Log("Base attack");
 
                 // ref
-                spl_selected = spl_Blue;
+                spl_selected = spl_objects[1];
 
                 if (spl_selected.enable)
                 {
@@ -792,7 +811,7 @@ public class PlayerAttack : MonoBehaviour
                         {
                             RefreshSpellCdText(50);
                         }
-                        else if (result >= spl_selected.useSpellMaxCooldown / 2f)
+                        else
                         {
                             RefreshSpellCdText(25);
                         }
@@ -801,26 +820,30 @@ public class PlayerAttack : MonoBehaviour
 
                     attackBtn.GetComponent<Image>().sprite = spellSprites[5];
                     attackBtn.GetComponent<Image>().color = Color.blue;
+                    spl_Lock.SetActive(false);
+                    spl_MeshRs[5].material = spl_MatUnlocked[5];
 
                     if (groundColor == "Blue")
                     {
-                        damage = spl_Blue.damage * 3;
+                        damage = spl_objects[1].damage * 3;
                     }
                     else
                     {
-                        damage = spl_Blue.damage;
+                        damage = spl_objects[1].damage;
                     }
 
-                    healPoints = spl_Blue.healPoints;
-                    isPoisoned = spl_Blue._isPoisoned;
-                    isDistantAttack = spl_Blue._isDistantAttack;
-                    canTeleport = spl_Blue._canTeleport;
-                    canHeal = spl_Blue._canHeal;
+                    healPoints = spl_objects[1].healPoints;
+                    isPoisoned = spl_objects[1]._isPoisoned;
+                    isDistantAttack = spl_objects[1]._isDistantAttack;
+                    canTeleport = spl_objects[1]._canTeleport;
+                    canHeal = spl_objects[1]._canHeal;
                 }
                 else
                 {
                     attackBtn.GetComponent<Image>().sprite = spellSprites[5];
                     attackBtn.GetComponent<Image>().color = Color.grey;
+                    spl_Lock.SetActive(true);
+                    spl_MeshRs[5].material = spl_MatLocked[5];
                     RefreshSpellCdText(0);
                     damage = 0;
                     healPoints = 0;
@@ -848,9 +871,9 @@ public class PlayerAttack : MonoBehaviour
     /// get spells list, from other scripts
     /// </summary>
     /// <returns></returns>
-    public List<Spell> GetSpells()
+    public Spell_Object[] GetSpells()
     {
-        return spells;
+        return spl_objects;
     }
 
     int times = 0;
@@ -862,15 +885,15 @@ public class PlayerAttack : MonoBehaviour
         {
             while (times > 0)
             {
-                int value = Mathf.RoundToInt(Random.Range(0, spells.Count));
+                int value = Mathf.RoundToInt(Random.Range(0, spl_objects.Length));
 
-                for (int i = 0; i < spells.Count; i++)
+                for (int i = 0; i < spl_objects.Length; i++)
                 {
-                    if (i == value && spells[i].enable)
+                    if (i == value && spl_objects[i].enable)
                     {
-                        spells[i].enable = false;
+                        spl_objects[i].enable = false;
                         times--;
-                        Debug.Log(spells[i].name + " is disabled");
+                        Debug.Log(spl_objects[i].name + " is disabled");
                     }
                 }
             }
@@ -880,7 +903,7 @@ public class PlayerAttack : MonoBehaviour
     [HideInInspector] public bool canDecreaseCooldown = false;
     private void DecreaseCooldown()
     {
-        foreach (var spell in spells)
+        foreach (var spell in spl_objects)
         {
             if (!spell.canUseSpell && spell.curUseSpellCooldown > 0)
             {

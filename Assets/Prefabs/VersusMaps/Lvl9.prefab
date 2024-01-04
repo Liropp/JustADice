@@ -1788,7 +1788,7 @@ GameObject:
   - component: {fileID: 7402380086200369237}
   - component: {fileID: 7402380086200369236}
   - component: {fileID: 7402380086200369239}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1869,7 +1869,7 @@ BoxCollider:
   m_GameObject: {fileID: 7402380086200370089}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -3437,7 +3437,7 @@ GameObject:
   - component: {fileID: 7402380086400476300}
   - component: {fileID: 7402380086400476303}
   - component: {fileID: 7402380086400476302}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3518,7 +3518,7 @@ BoxCollider:
   m_GameObject: {fileID: 7402380086400476288}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -3922,7 +3922,7 @@ GameObject:
   - component: {fileID: 7402380086434092822}
   - component: {fileID: 7402380086434092905}
   - component: {fileID: 7402380086434092904}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Ground (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4003,7 +4003,7 @@ BoxCollider:
   m_GameObject: {fileID: 7402380086434092906}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -11287,7 +11287,7 @@ GameObject:
   - component: {fileID: 7402380087263543484}
   - component: {fileID: 7402380087263543487}
   - component: {fileID: 7402380087263543486}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Ground (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11368,7 +11368,7 @@ BoxCollider:
   m_GameObject: {fileID: 7402380087263543472}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -15388,7 +15388,7 @@ GameObject:
   - component: {fileID: 7402380087925115875}
   - component: {fileID: 7402380087925115874}
   - component: {fileID: 7402380087925115877}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Ground (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15469,7 +15469,7 @@ BoxCollider:
   m_GameObject: {fileID: 7402380087925115879}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -17037,8 +17037,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
+      propertyPath: canRespawn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
       propertyPath: powerIndex
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
+      propertyPath: respawnMaxCooldown
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974933, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
@@ -17068,7 +17078,7 @@ PrefabInstance:
     - target: {fileID: 6377830912992974929, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974929, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
@@ -17078,7 +17088,7 @@ PrefabInstance:
     - target: {fileID: 6377830912992974929, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974929, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
@@ -17122,8 +17132,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
+      propertyPath: canRespawn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
       propertyPath: powerIndex
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
+      propertyPath: respawnMaxCooldown
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974933, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
@@ -18707,8 +18727,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}
+      propertyPath: canRespawn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
       propertyPath: powerIndex
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377830912992974930, guid: 3d98e543c1e27c8409690f22433c4833,
+        type: 3}
+      propertyPath: respawnMaxCooldown
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6377830912992974933, guid: 3d98e543c1e27c8409690f22433c4833,
         type: 3}

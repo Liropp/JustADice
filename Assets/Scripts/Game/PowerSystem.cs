@@ -69,14 +69,37 @@ public class PowerSystem : MonoBehaviour
                     //Debug.Log("hitObject : " + hitObject);
                     //Debug.Log("owner : " + owner);
 
-                    if (hitObject.CompareTag("Player") && hitObject != owner || hitObject.CompareTag("Enemy"))
+                    if(_powerIndex == 1)
                     {
-                        Fireball(hitObject);
+                        if (hitObject.CompareTag("Player") && hitObject != owner || hitObject.CompareTag("Enemy"))
+                        {
+                            Fireball(hitObject);
+                        }
                     }
 
-                    if (hitObject.layer == 3)
+                    if (_powerIndex == 2)
                     {
-                        CursedGround(hitObject);
+                        if (hitObject.layer == 3)
+                        {
+                            Debug.Log("hitObject : " + hitObject.name);
+
+                            RaycastHit up;
+                            //Debug.DrawRay(hitObject.transform.position, transform.up * Mathf.Infinity, Color.red, 5f);
+                            if (Physics.Raycast(hitObject.transform.position, transform.up, out up, Mathf.Infinity, whatToAttack))
+                            {
+                                GameObject hitPlayer = up.collider.gameObject;
+                                Debug.Log("hitPlayer : " + hitPlayer.name);
+
+                                if (!hitPlayer.CompareTag("Player"))
+                                {
+                                    CursedGround(hitObject);
+                                }
+                            }
+                            else
+                            {
+                                CursedGround(hitObject);
+                            }
+                        }
                     }
                 }
             }
@@ -95,6 +118,7 @@ public class PowerSystem : MonoBehaviour
             }
         }
 
+        //Debug.Log("isInv : " + isInv);
         if (isInv)
         {
             if (FindObjectOfType<GameManager>().GetTurnCount() >= invEndTurn)
@@ -109,7 +133,14 @@ public class PowerSystem : MonoBehaviour
                 usingPower = false;
 
                 #region particles
-                FindObjectOfType<VFXManager>().DestroySpawnInstance();
+                foreach (Transform child in owner.transform)
+                {
+                    Debug.Log(child.name);
+                    if(child.gameObject.layer == 8)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
                 #endregion
 
                 Debug.Log("VINCIBLE");
@@ -121,35 +152,38 @@ public class PowerSystem : MonoBehaviour
 
     public void NewPower(int index)
     {
-        _powerIndex = index;
-        //Debug.Log("LOOT POWER : " + _powerIndex);
-
-        switch (_powerIndex)
+        if(_powerIndex <= 0)
         {
-            case 1:
-                powerName.text = "Fireball";
-                powerBtn.GetComponent<Image>().sprite = sprites[0];
-                powerBtn.GetComponent<Image>().color = Color.magenta;
+            _powerIndex = index;
+            //Debug.Log("LOOT POWER : " + _powerIndex);
 
-                break;
-            case 2:
-                powerName.text = "Cursed ground";
-                powerBtn.GetComponent<Image>().sprite = sprites[1];
-                powerBtn.GetComponent<Image>().color = Color.white;
+            switch (_powerIndex)
+            {
+                case 1:
+                    powerName.text = "Fireball";
+                    powerBtn.GetComponent<Image>().sprite = sprites[0];
+                    powerBtn.GetComponent<Image>().color = Color.magenta;
 
-                break;
-            case 3:
-                powerName.text = "Invincible";
-                powerBtn.GetComponent<Image>().sprite = sprites[2];
-                powerBtn.GetComponent<Image>().color = Color.white;
+                    break;
+                case 2:
+                    powerName.text = "Cursed ground";
+                    powerBtn.GetComponent<Image>().sprite = sprites[1];
+                    powerBtn.GetComponent<Image>().color = Color.white;
 
-                break;
-            case 4:
-                powerName.text = "Choose a color";
-                powerBtn.GetComponent<Image>().sprite = sprites[3];
-                powerBtn.GetComponent<Image>().color = Color.white;
+                    break;
+                case 3:
+                    powerName.text = "Invincible";
+                    powerBtn.GetComponent<Image>().sprite = sprites[2];
+                    powerBtn.GetComponent<Image>().color = Color.white;
 
-                break;
+                    break;
+                case 4:
+                    powerName.text = "Choose a color";
+                    powerBtn.GetComponent<Image>().sprite = sprites[3];
+                    powerBtn.GetComponent<Image>().color = Color.white;
+
+                    break;
+            }
         }
     }
 
