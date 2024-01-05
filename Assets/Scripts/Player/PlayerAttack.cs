@@ -381,6 +381,17 @@ public class PlayerAttack : MonoBehaviour
         {
             enemyAround = false;
         }
+
+        // Bug fix
+        if (!enemyAround && !attackBtn.activeInHierarchy && !canHeal && !canTeleport && !isDistantAttack)
+        {
+            //Debug.Log("Bug");
+
+            canAttack = false;
+            attackBtn.SetActive(true);
+            spl_selected.canUseSpell = true;
+            spl_selected.curUseSpellCooldown = 0;
+        }
     }
 
     /// <summary>

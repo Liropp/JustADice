@@ -23,6 +23,7 @@ public class InfinityManager : MonoBehaviour
     private List<GameObject> pawnsList = new List<GameObject>();
     [Header("Scoring")]
     private int score = 0;
+    [SerializeReference] private TextMeshProUGUI scoreTxtInGame;
     [SerializeReference] private TextMeshProUGUI scoreTxt;
     [SerializeReference] private TextMeshProUGUI bestScoreTxt;
     [SerializeReference] private GameObject endUI;
@@ -131,6 +132,8 @@ public class InfinityManager : MonoBehaviour
         {
             DisplayScore();
         }
+
+        scoreTxtInGame.text = "Score : " + score.ToString();
     }
 
     private void DisplayScore()

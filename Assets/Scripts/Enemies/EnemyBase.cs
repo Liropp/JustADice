@@ -135,182 +135,185 @@ public class EnemyBase : MonoBehaviour
     {
         #region Can AI move ?
 
-        #region Detect ground forward ?
-        RaycastHit hitGround;
-        if (Physics.Raycast(transform.position + transform.forward * moveDist, transform.TransformDirection(-Vector3.up), out hitGround, Mathf.Infinity, whatIsGround))
+        if (needToMove < 4)
         {
-            //Debug.DrawRay(transform.position + transform.forward * moveDist, transform.TransformDirection(-Vector3.up) * hitGround.distance, Color.red, 10f);
-            //Debug.Log("Did Hit " + hitGround.collider.gameObject.name);
+            #region Detect ground forward ?
+            RaycastHit hitGround;
+            if (Physics.Raycast(transform.position + transform.forward * moveDist, transform.TransformDirection(-Vector3.up), out hitGround, Mathf.Infinity, whatIsGround))
+            {
+                //Debug.DrawRay(transform.position + transform.forward * moveDist, transform.TransformDirection(-Vector3.up) * hitGround.distance, Color.red, 10f);
+                //Debug.Log("Did Hit " + hitGround.collider.gameObject.name);
 
-            #region Detect obstacle ?
-            RaycastHit hitObstacle;
-            if (Physics.Raycast(transform.position + transform.up * yOffset + transform.forward, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                #region Detect obstacle ?
+                RaycastHit hitObstacle;
+                if (Physics.Raycast(transform.position + transform.up * yOffset + transform.forward, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                {
+                    dir.Remove("Forward");
+
+                    // Detect Player ?
+                    if (hitObstacle.collider.transform != target)
+                    {
+                        needToMove++;
+                    }
+                }
+                else
+                {
+                    dir.Add("Forward");
+
+                    float distF = Vector3.Distance(transform.position + transform.forward * moveDist, target.position);
+
+                    if (Physics.Raycast(transform.position + transform.forward * moveDist, transform.TransformDirection(Vector3.right), out hitObstacle, 2f, whatIsObstacle) || Physics.Raycast(transform.position + transform.forward * moveDist, transform.TransformDirection(-Vector3.right), out hitObstacle, 2f, whatIsObstacle))
+                    {
+                        dist.Add(distF + 1);
+
+                        //Debug.Log("wall, not the best path");
+                    }
+                    else
+                    {
+                        dist.Add(distF);
+                    }
+
+                    needToMove++;
+                }
+                #endregion
+            }
+            else
             {
                 dir.Remove("Forward");
 
-                // Detect Player ?
-                if(hitObstacle.collider.transform != target)
-                {
-                    needToMove++;
-                }
-            }
-            else
-            {
-                dir.Add("Forward");
-
-                float distF = Vector3.Distance(transform.position + transform.forward * moveDist, target.position);
-
-                if (Physics.Raycast(transform.position + transform.forward * moveDist, transform.TransformDirection(Vector3.right), out hitObstacle, 2f, whatIsObstacle) || Physics.Raycast(transform.position + transform.forward * moveDist, transform.TransformDirection(-Vector3.right), out hitObstacle, 2f, whatIsObstacle))
-                {
-                    dist.Add(distF+1);
-
-                    //Debug.Log("wall, not the best path");
-                }
-                else
-                {
-                    dist.Add(distF);
-                }
-
                 needToMove++;
             }
             #endregion
-        }
-        else
-        {
-            dir.Remove("Forward");
 
-            needToMove++;
-        }
-        #endregion
+            #region Detect ground backward ?
+            if (Physics.Raycast(transform.position - transform.forward * moveDist, transform.TransformDirection(-Vector3.up), out hitGround, Mathf.Infinity, whatIsGround))
+            {
+                #region Detect obstacle ?
+                RaycastHit hitObstacle;
+                if (Physics.Raycast(transform.position + transform.up * yOffset - transform.forward, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                {
+                    dir.Remove("Backward");
 
-        #region Detect ground backward ?
-        if (Physics.Raycast(transform.position - transform.forward * moveDist, transform.TransformDirection(-Vector3.up), out hitGround, Mathf.Infinity, whatIsGround))
-        {
-            #region Detect obstacle ?
-            RaycastHit hitObstacle;
-            if (Physics.Raycast(transform.position + transform.up * yOffset - transform.forward, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                    // Detect Player ?
+                    if (hitObstacle.collider.transform != target)
+                    {
+                        needToMove++;
+                    }
+                }
+                else
+                {
+                    dir.Add("Backward");
+
+                    float distB = Vector3.Distance(transform.position - transform.forward * moveDist, target.position);
+
+                    //Debug.DrawRay(transform.position - transform.forward * moveDist, transform.TransformDirection(Vector3.right) * 1f, Color.red, 1f);
+                    Debug.DrawRay(transform.position - (transform.forward * moveDist) + transform.TransformDirection(Vector3.right), transform.TransformDirection(-Vector3.up) * 1f, Color.red, 1f);
+                    Debug.DrawRay(transform.position - (transform.forward * moveDist) + transform.TransformDirection(-Vector3.right), transform.TransformDirection(-Vector3.up) * 1f, Color.red, 1f);
+                    if (Physics.Raycast(transform.position - transform.forward * moveDist, transform.TransformDirection(Vector3.right), out hitObstacle, 2f, whatIsObstacle) || Physics.Raycast(transform.position - transform.forward * moveDist, transform.TransformDirection(-Vector3.right), out hitObstacle, 2f, whatIsObstacle))
+                    {
+                        dist.Add(distB + 1);
+
+                        //Debug.Log("wall, not the best path");
+                    }
+                    else
+                    {
+                        dist.Add(distB);
+                    }
+
+                    needToMove++;
+                }
+                #endregion
+            }
+            else
             {
                 dir.Remove("Backward");
 
-                // Detect Player ?
-                if (hitObstacle.collider.transform != target)
-                {
-                    needToMove++;
-                }
+                needToMove++;
             }
-            else
+            #endregion
+
+            #region Detect ground right ?
+            if (Physics.Raycast(transform.position + transform.right, transform.TransformDirection(-Vector3.up), out hitGround, Mathf.Infinity, whatIsGround))
             {
-                dir.Add("Backward");
-
-                float distB = Vector3.Distance(transform.position - transform.forward * moveDist, target.position);
-
-                //Debug.DrawRay(transform.position - transform.forward * moveDist, transform.TransformDirection(Vector3.right) * 1f, Color.red, 1f);
-                Debug.DrawRay(transform.position - (transform.forward * moveDist) + transform.TransformDirection(Vector3.right), transform.TransformDirection(-Vector3.up) * 1f, Color.red, 1f);
-                Debug.DrawRay(transform.position - (transform.forward * moveDist) + transform.TransformDirection(-Vector3.right), transform.TransformDirection(-Vector3.up) * 1f, Color.red, 1f);
-                if (Physics.Raycast(transform.position - transform.forward * moveDist, transform.TransformDirection(Vector3.right), out hitObstacle, 2f, whatIsObstacle) || Physics.Raycast(transform.position - transform.forward * moveDist, transform.TransformDirection(-Vector3.right), out hitObstacle, 2f, whatIsObstacle))
+                #region Detect obstacle ?
+                RaycastHit hitObstacle;
+                if (Physics.Raycast(transform.position + transform.up * yOffset + transform.right, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
                 {
-                    dist.Add(distB + 1);
+                    dir.Remove("Right");
 
-                    //Debug.Log("wall, not the best path");
+                    // Detect Player ?
+                    if (hitObstacle.collider.transform != target)
+                    {
+                        needToMove++;
+                    }
                 }
                 else
                 {
-                    dist.Add(distB);
+                    dir.Add("Right");
+
+                    float distR = Vector3.Distance(transform.position + transform.right, target.position);
+
+                    dist.Add(distR);
+
+                    needToMove++;
                 }
-
-                needToMove++;
+                #endregion
             }
-            #endregion
-        }
-        else
-        {
-            dir.Remove("Backward");
-
-            needToMove++;
-        }
-        #endregion
-
-        #region Detect ground right ?
-        if (Physics.Raycast(transform.position + transform.right, transform.TransformDirection(-Vector3.up), out hitGround, Mathf.Infinity, whatIsGround))
-        {
-            #region Detect obstacle ?
-            RaycastHit hitObstacle;
-            if (Physics.Raycast(transform.position + transform.up * yOffset + transform.right, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+            else
             {
                 dir.Remove("Right");
 
-                // Detect Player ?
-                if (hitObstacle.collider.transform != target)
-                {
-                    needToMove++;
-                }
-            }
-            else
-            {
-                dir.Add("Right");
-
-                float distR = Vector3.Distance(transform.position + transform.right, target.position);
-
-                dist.Add(distR);
-
                 needToMove++;
             }
             #endregion
-        }
-        else
-        {
-            dir.Remove("Right");
 
-            needToMove++;
-        }
-        #endregion
+            #region Detect ground left ?
+            if (Physics.Raycast(transform.position - transform.right, transform.TransformDirection(-Vector3.up), out hitGround, Mathf.Infinity, whatIsGround))
+            {
+                #region Detect obstacle ?
+                RaycastHit hitObstacle;
+                if (Physics.Raycast(transform.position + transform.up * yOffset - transform.right, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                {
+                    dir.Remove("Left");
 
-        #region Detect ground left ?
-        if (Physics.Raycast(transform.position - transform.right, transform.TransformDirection(-Vector3.up), out hitGround, Mathf.Infinity, whatIsGround))
-        {
-            #region Detect obstacle ?
-            RaycastHit hitObstacle;
-            if (Physics.Raycast(transform.position + transform.up * yOffset - transform.right, transform.TransformDirection(-Vector3.up), out hitObstacle, Mathf.Infinity, whatIsObstacle))
+                    // Detect Player ?
+                    if (hitObstacle.collider.transform != target)
+                    {
+                        needToMove++;
+                    }
+                }
+                else
+                {
+                    dir.Add("Left");
+
+                    float distL = Vector3.Distance(transform.position - transform.right, target.position);
+
+                    dist.Add(distL);
+
+                    needToMove++;
+                }
+                #endregion
+            }
+            else
             {
                 dir.Remove("Left");
 
-                // Detect Player ?
-                if (hitObstacle.collider.transform != target)
-                {
-                    needToMove++;
-                }
-            }
-            else
-            {
-                dir.Add("Left");
-
-                float distL = Vector3.Distance(transform.position - transform.right, target.position);
-
-                dist.Add(distL);
-
                 needToMove++;
             }
             #endregion
         }
-        else
-        {
-            dir.Remove("Left");
-
-            needToMove++;
-        }
-        #endregion
 
         #endregion
 
         // if needToMove is < 4, this mean the AI is next to the player and don't need to move
         // if needToMove is >= 4, he need to move towards the player
+        //Debug.Log(needToMove);
         if (needToMove >= 4)
         {
             //Debug.Log("no player around");
 
             float minValue = dist.Min();
             minIndex = dist.IndexOf(minValue);
-            //Debug.Log(minIndex);
 
             // If player is'nt next to him, he can't attack
             enemyStats.canAttack = false;
@@ -340,10 +343,15 @@ public class EnemyBase : MonoBehaviour
         timerM += Time.fixedDeltaTime;
         //Debug.Log(timerM);
 
+        //Debug.Log("minIndex : " + minIndex);
+        //Debug.Log("dir.Count : " + dir.Count);
+
         if (minIndex <= dir.Count)
         {
             if(timeElapsed == 0)
             {
+                Debug.Log("C?");
+
                 string direction = dir[minIndex];
                 //Debug.Log(direction);
 
@@ -406,6 +414,8 @@ public class EnemyBase : MonoBehaviour
             // Move the enemy one square
             if (timerM < turnCooldown / 2)
             {
+                Debug.Log("B?");
+
                 var endPos = new Vector3(startPos.x + moveDir.x, startPos.y, startPos.z + moveDir.z);
                 //Debug.Log(moveDir);
                 //Debug.Log(endPos);
@@ -420,6 +430,8 @@ public class EnemyBase : MonoBehaviour
             }
             else
             {
+                Debug.Log("A?");
+
                 //Debug.Log("end");
 
                 var endPos = startPos + moveDir;
