@@ -215,7 +215,7 @@ public class PlayerController : MonoBehaviour
         {
             FindObjectOfType<GameManager>().pawnPlayed.Invoke();
             gameObject.GetComponent<PlayerAttack>().canDecreaseCooldown = true;
-            gameObject.GetComponent<PlayerMotor>().multi_movePerTurn = 0;
+            gameObject.GetComponent<PlayerMotor>().ResetMovePerTurn();
             playOnce = false;
         }
         else

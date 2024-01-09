@@ -969,7 +969,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4717,7 +4717,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 372fd4489bdfebd47aa4b4bad5362816, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4862,6 +4862,7 @@ MonoBehaviour:
   winBtn: {fileID: 2084276466}
   endTxt: {fileID: 879025645}
   isSolo: 0
+  canRevive: 0
 --- !u!1 &1089626346
 GameObject:
   m_ObjectHideFlags: 0
@@ -7205,37 +7206,37 @@ MonoBehaviour:
   sounds:
   - name: NextTurn
     clip: {fileID: 8300000, guid: a68758c7570fabd4e88aa7b7eccd342f, type: 3}
-    volumeDown: 0.75
+    volumeDown: 0
     pitch: 1
     source: {fileID: 0}
   - name: BlackSpell
     clip: {fileID: 8300000, guid: 2385fc6cef6ca124c856bea538264ff6, type: 3}
-    volumeDown: 0.75
+    volumeDown: 0
     pitch: 1
     source: {fileID: 0}
   - name: BlueSpell
     clip: {fileID: 8300000, guid: d2811126238cb134886f599960e55b46, type: 3}
-    volumeDown: 0.75
+    volumeDown: 0
     pitch: 1
     source: {fileID: 0}
   - name: GreenSpell
     clip: {fileID: 8300000, guid: 6ec99edca71f9174f9a03621e472e43f, type: 3}
-    volumeDown: 0.75
+    volumeDown: 0
     pitch: 1
     source: {fileID: 0}
   - name: PinkSpell
     clip: {fileID: 8300000, guid: 78f33e423037fd44abd3b561e6da9c8e, type: 3}
-    volumeDown: 0.75
+    volumeDown: 0
     pitch: 1
     source: {fileID: 0}
   - name: RedSpell
     clip: {fileID: 8300000, guid: 2590f8fd62319024385d095f88bbe4d1, type: 3}
-    volumeDown: 0.75
+    volumeDown: 0
     pitch: 1
     source: {fileID: 0}
   - name: YellowSpell
     clip: {fileID: 8300000, guid: a6046ba024c36204db5aff320fe8b8da, type: 3}
-    volumeDown: 0.75
+    volumeDown: 0
     pitch: 1
     source: {fileID: 0}
   - name: Fade
@@ -7300,6 +7301,11 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: AClick_Btn
     clip: {fileID: 8300000, guid: e4e54205c4a507247a39298bdce74454, type: 3}
+    volumeDown: 0
+    pitch: 1
+    source: {fileID: 0}
+  - name: PickupPower
+    clip: {fileID: 8300000, guid: 6c39c12718cedbf448e304709d9737ce, type: 3}
     volumeDown: 0
     pitch: 1
     source: {fileID: 0}

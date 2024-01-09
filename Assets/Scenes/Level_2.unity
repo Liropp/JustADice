@@ -3720,7 +3720,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4531,6 +4531,12 @@ PrefabInstance:
       propertyPath: attackBtn
       value: 
       objectReference: {fileID: 1915156152}
+    - target: {fileID: 623963283201840360, guid: 2ab5a472506ed7644ab1ec350b259b3e,
+        type: 3}
+      propertyPath: DistantAttackUI
+      value: 
+      objectReference: {fileID: 5256793980441242067, guid: 36acbf68b641e5e43ba10e0f227b1b70,
+        type: 3}
     - target: {fileID: 623963283201840360, guid: 2ab5a472506ed7644ab1ec350b259b3e,
         type: 3}
       propertyPath: spl_cooldownTxt
@@ -6977,6 +6983,11 @@ MonoBehaviour:
     volumeDown: 0
     pitch: 1
     source: {fileID: 0}
+  - name: PickupPower
+    clip: {fileID: 8300000, guid: 6c39c12718cedbf448e304709d9737ce, type: 3}
+    volumeDown: 0
+    pitch: 1
+    source: {fileID: 0}
 --- !u!4 &1279462837
 Transform:
   m_ObjectHideFlags: 0
@@ -7036,6 +7047,7 @@ MonoBehaviour:
   winBtn: {fileID: 282326766}
   endTxt: {fileID: 2121689112}
   isSolo: 0
+  canRevive: 0
 --- !u!4 &1292559766
 Transform:
   m_ObjectHideFlags: 0
@@ -11413,7 +11425,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 372fd4489bdfebd47aa4b4bad5362816, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

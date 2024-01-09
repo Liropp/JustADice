@@ -350,8 +350,6 @@ public class EnemyBase : MonoBehaviour
         {
             if(timeElapsed == 0)
             {
-                Debug.Log("C?");
-
                 string direction = dir[minIndex];
                 //Debug.Log(direction);
 
@@ -414,8 +412,6 @@ public class EnemyBase : MonoBehaviour
             // Move the enemy one square
             if (timerM < turnCooldown / 2)
             {
-                Debug.Log("B?");
-
                 var endPos = new Vector3(startPos.x + moveDir.x, startPos.y, startPos.z + moveDir.z);
                 //Debug.Log(moveDir);
                 //Debug.Log(endPos);
@@ -430,12 +426,11 @@ public class EnemyBase : MonoBehaviour
             }
             else
             {
-                Debug.Log("A?");
-
                 //Debug.Log("end");
 
                 var endPos = startPos + moveDir;
                 transform.position = Vector3.Lerp(startPos, endPos, 1);
+
                 Played();
             }
         }

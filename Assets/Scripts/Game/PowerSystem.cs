@@ -22,6 +22,12 @@ public class PowerSystem : MonoBehaviour
     [SerializeField] private Button powerBtn;
     [SerializeField] private Sprite[] sprites;
 
+    [Header("Feedbacks")]
+    [SerializeField] private GameObject fb_distantAttack;
+    [SerializeField] private GameObject fb_teleport;
+    [SerializeField] private TextMeshProUGUI fb_countTxt;
+    private Animator fb_animator;
+
     private void Start()
     {
         powerName.text = "Nothing";
@@ -30,6 +36,8 @@ public class PowerSystem : MonoBehaviour
         currPowerBtn = this.gameObject;
         colors.SetActive(false);
         owner = playerGFX.transform.parent.gameObject;
+        fb_animator = this.gameObject.GetComponent<Animator>();
+        fb_countTxt.enabled = false;
     }
 
     public void UsePower()
@@ -48,6 +56,16 @@ public class PowerSystem : MonoBehaviour
                 //Debug.Log("USE POWER : " + _powerIndex + "!");
                 currPowerBtn.GetComponent<Image>().enabled = false;
                 usingPower = true;
+
+                if (_powerIndex == 1)
+                {
+                    owner.GetComponent<PlayerAttack>().FeedbackArrowSetup(fb_distantAttack);
+                }
+
+                if (_powerIndex == 2)
+                {
+                    owner.GetComponent<PlayerAttack>().FeedbackPlaneSetup(fb_teleport);
+                }
             }
         }
     }
@@ -147,7 +165,7 @@ public class PowerSystem : MonoBehaviour
                 isInv = false;
                 invEndTurn = 0;
             }
-        }        
+        }
     }
 
     public void NewPower(int index)
@@ -156,6 +174,8 @@ public class PowerSystem : MonoBehaviour
         {
             _powerIndex = index;
             //Debug.Log("LOOT POWER : " + _powerIndex);
+            FindObjectOfType<AudioManager>().Play("PickupPower");
+            fb_animator.SetTrigger("PickupTrigger");
 
             switch (_powerIndex)
             {
@@ -163,24 +183,29 @@ public class PowerSystem : MonoBehaviour
                     powerName.text = "Fireball";
                     powerBtn.GetComponent<Image>().sprite = sprites[0];
                     powerBtn.GetComponent<Image>().color = Color.magenta;
+                    fb_countTxt.enabled = false;
 
                     break;
                 case 2:
                     powerName.text = "Cursed ground";
                     powerBtn.GetComponent<Image>().sprite = sprites[1];
                     powerBtn.GetComponent<Image>().color = Color.white;
+                    fb_countTxt.enabled = true;
+                    fb_countTxt.text = "x" + cgCount;
 
                     break;
                 case 3:
                     powerName.text = "Invincible";
                     powerBtn.GetComponent<Image>().sprite = sprites[2];
                     powerBtn.GetComponent<Image>().color = Color.white;
+                    fb_countTxt.enabled = false;
 
                     break;
                 case 4:
                     powerName.text = "Choose a color";
                     powerBtn.GetComponent<Image>().sprite = sprites[3];
                     powerBtn.GetComponent<Image>().color = Color.white;
+                    fb_countTxt.enabled = false;
 
                     break;
             }
@@ -215,11 +240,15 @@ public class PowerSystem : MonoBehaviour
             currPowerBtn.GetComponent<Image>().enabled = true;
             usingPower = false;
         }
+
+        owner.GetComponent<PlayerAttack>().DeleteFeedbacks();
     }
 
     private void CursedGround(GameObject target)
     {
         cgCount--;
+        fb_countTxt.text = "x" + cgCount;
+        owner.GetComponent<PlayerAttack>().DeleteFeedbacks();
 
         Instantiate(cursedGround, target.transform.position, target.transform.rotation);
         Destroy(target);
@@ -231,8 +260,13 @@ public class PowerSystem : MonoBehaviour
             powerName.text = "Nothing";
             powerBtn.GetComponent<Image>().sprite = sprites[4];
             powerBtn.GetComponent<Image>().color = Color.magenta;
+            fb_countTxt.enabled = false;
             usingPower = false;
             cgCount = 3;
+        }
+        else
+        {
+            usingPower = false;
         }
     }
 

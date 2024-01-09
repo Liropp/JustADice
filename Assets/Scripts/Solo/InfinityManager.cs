@@ -145,13 +145,13 @@ public class InfinityManager : MonoBehaviour
             // new best score
 
             PlayerPrefs.SetInt("BestScore", score);
-            bestScoreTxt.text = "Best score : " + score.ToString();
+            bestScoreTxt.text = "High score : " + score.ToString();
         }
         else
         {
             // not your best score
 
-            bestScoreTxt.text = "Best score : " + PlayerPrefs.GetInt("BestScore").ToString();
+            bestScoreTxt.text = "High score : " + PlayerPrefs.GetInt("BestScore").ToString();
         }
 
         if (PlayerPrefs.GetInt("BestScore", 0) <= 0)
@@ -159,7 +159,7 @@ public class InfinityManager : MonoBehaviour
             // first best score
 
             PlayerPrefs.SetInt("BestScore", score);
-            bestScoreTxt.text = "Best score : " + score.ToString();
+            bestScoreTxt.text = "High score : " + score.ToString();
         }
     }
 }

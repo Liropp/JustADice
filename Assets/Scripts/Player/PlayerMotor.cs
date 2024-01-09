@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(PlayerController))]
 public class PlayerMotor : MonoBehaviour
@@ -18,8 +19,11 @@ public class PlayerMotor : MonoBehaviour
     //Rotation : End rotation
     private Quaternion rotEnd;
 
-    private int multi_moveMaxPerTurn = 3;
-    [HideInInspector] public int multi_movePerTurn = 0;
+    private int multi_moveMaxPerTurn = 5;
+    private int multi_movePerTurn = 0;
+
+    [Header("Feedbacks")]
+    [SerializeField] private Slider fb_actionsCount;
 
     private void Awake()
     {
@@ -28,6 +32,9 @@ public class PlayerMotor : MonoBehaviour
 
         // Set ref(s)
         playerController = gameObject.GetComponent<PlayerController>();
+
+        if (FindObjectOfType<GameManager>().isMulti)
+            FeedbackActionsReset();
     }
 
     public void Move(Vector3 dir)
@@ -58,9 +65,11 @@ public class PlayerMotor : MonoBehaviour
                 {
                     multi_movePerTurn++;
                     //Debug.Log(multi_movePerTurn + "/" + multi_moveMaxPerTurn);
+                    FeedbackActionsDecrease();
 
                     if (multi_movePerTurn >= multi_moveMaxPerTurn)
                     {
+                        FeedbackActionsReset();
                         playerController.SetcanMove(false);
                     }
                 }
@@ -87,5 +96,24 @@ public class PlayerMotor : MonoBehaviour
             // Rotate the dice in a direction
             playerController.playerGFX.transform.rotation = Quaternion.Lerp(playerController.playerGFX.transform.rotation, rotEnd, t);
         }
+    }
+
+    public void ResetMovePerTurn()
+    {
+        multi_movePerTurn = 0;
+
+        if (FindObjectOfType<GameManager>().isMulti)
+            FeedbackActionsReset();
+    }
+
+    private void FeedbackActionsDecrease()
+    {
+        fb_actionsCount.value = multi_movePerTurn;
+    }
+
+    private void FeedbackActionsReset()
+    {
+        fb_actionsCount.maxValue = multi_moveMaxPerTurn;
+        fb_actionsCount.value = 0;
     }
 }

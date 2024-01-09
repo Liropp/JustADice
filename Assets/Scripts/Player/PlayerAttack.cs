@@ -37,6 +37,11 @@ public class PlayerAttack : MonoBehaviour
     private Spell_Object spl_selected;
     string groundColor;
 
+    [Header("Feedbacks")]
+    [SerializeField] private GameObject fb_attack;
+    [SerializeField] private GameObject fb_teleport;
+    private List<GameObject> fb_Instances = new List<GameObject>();
+
     private void Awake()
     {
         playerController = gameObject.GetComponent<PlayerController>();
@@ -109,11 +114,13 @@ public class PlayerAttack : MonoBehaviour
                             case "Green":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("GreenSpell");
+                                DeleteFeedbacks();
 
                                 break;
                             case "Red":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("RedSpell");
+                                DeleteFeedbacks();
                                 #region particles
                                 Vector3 RstartPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z);
                                 Vector3 Rpos = hitObject.transform.position;
@@ -124,6 +131,7 @@ public class PlayerAttack : MonoBehaviour
                             case "Yellow":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("YellowSpell");
+                                DeleteFeedbacks();
                                 #region particles
                                 Vector3 Ypos = hitObject.transform.position;
                                 FindObjectOfType<VFXManager>().SpawnMoving("Arrow", this.transform.position, Ypos);
@@ -133,6 +141,7 @@ public class PlayerAttack : MonoBehaviour
                             case "Blue":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("BlueSpell");
+                                DeleteFeedbacks();
                                 #region particles
                                 Vector3 BstartPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z);
                                 Vector3 Bpos = hitObject.transform.position;
@@ -169,11 +178,13 @@ public class PlayerAttack : MonoBehaviour
                             case "Green":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("GreenSpell");
+                                DeleteFeedbacks();
 
                                 break;
                             case "Red":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("RedSpell");
+                                DeleteFeedbacks();
                                 #region particles
                                 Vector3 RstartPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z);
                                 Vector3 Rpos = hitObject.transform.position;
@@ -184,6 +195,7 @@ public class PlayerAttack : MonoBehaviour
                             case "Yellow":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("YellowSpell");
+                                DeleteFeedbacks();
                                 #region particles
                                 Vector3 Ypos = hitObject.transform.position;
                                 FindObjectOfType<VFXManager>().SpawnMoving("Arrow", this.transform.position, Ypos);
@@ -193,6 +205,7 @@ public class PlayerAttack : MonoBehaviour
                             case "Blue":
                                 //Debug.Log("Poison");
                                 FindObjectOfType<AudioManager>().Play("BlueSpell");
+                                DeleteFeedbacks();
                                 #region particles
                                 Vector3 BstartPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z);
                                 Vector3 Bpos = hitObject.transform.position;
@@ -231,6 +244,7 @@ public class PlayerAttack : MonoBehaviour
         Vector3 pos = new Vector3(this.transform.position.x, this.transform.position.y - .5f, this.transform.position.z);
         FindObjectOfType<VFXManager>().Spawn("TP", pos, 3f);
         #endregion
+        DeleteFeedbacks();
 
         Vector3 centeredPos = new Vector3(Mathf.RoundToInt(_hitPoint.x), transform.position.y, Mathf.RoundToInt(_hitPoint.z));
         //Debug.Log(centeredPos);
@@ -407,7 +421,7 @@ public class PlayerAttack : MonoBehaviour
         if (spl_selected.canUseSpell && spl_selected.enable)
         {
             // only if there is an enemy next to player
-            if (enemyAround || isDistantAttack || canHeal || canTeleport && playerController.GetcanMove())
+            if (enemyAround && playerController.GetcanMove() || isDistantAttack && playerController.GetcanMove() || canHeal && playerController.GetcanMove() || canTeleport && playerController.GetcanMove())
             {
                 canAttack = true;
                 attackBtn.SetActive(false);
@@ -426,6 +440,21 @@ public class PlayerAttack : MonoBehaviour
                     playerController.SetcanMove(false);
 
                     canAttack = false;
+                }
+
+                if (isDistantAttack)
+                {
+                    FeedbackArrowSetup(fb_attack);
+                }
+
+                if (!isDistantAttack && !canHeal && !canTeleport)
+                {
+                    FeedbackArrowSetup(fb_attack);
+                }
+
+                if (canTeleport)
+                {
+                    FeedbackPlaneSetup(fb_teleport);
                 }
 
                 spl_selected.curUseSpellCooldown = spl_selected.useSpellMaxCooldown;
@@ -562,7 +591,7 @@ public class PlayerAttack : MonoBehaviour
                     #endregion
 
                     attackBtn.GetComponent<Image>().sprite = spellSprites[1];
-                    attackBtn.GetComponent<Image>().color = Color.black;
+                    attackBtn.GetComponent<Image>().color = Color.white;
                     spl_Lock.SetActive(false);
                     spl_MeshRs[1].material = spl_MatUnlocked[1];
 
@@ -922,6 +951,87 @@ public class PlayerAttack : MonoBehaviour
                 //Debug.Log(spell.name + " " + spell.curUseSpellCooldown);
             }
         }
+    }
+
+    public void FeedbackArrowSetup(GameObject fb_prefab)
+    {
+        GameManager gM = FindObjectOfType<GameManager>();
+
+        if (!gM.isMulti)
+        {
+            foreach (var target in FindObjectsOfType<EnemyBase>())
+            {
+                Vector3 pos = new Vector3(target.transform.position.x, target.transform.position.y + 2.75f, target.transform.position.z);
+                Quaternion rot = Quaternion.Euler(-90, 0, 0);
+                GameObject instance = Instantiate(fb_prefab, pos, rot);
+                fb_Instances.Add(instance);
+            }
+        }
+        else
+        {
+            foreach (var target in FindObjectsOfType<PlayerController>())
+            {
+                if (target.gameObject != this.gameObject)
+                {
+                    Vector3 pos = new Vector3(target.transform.position.x, target.transform.position.y + 2f, target.transform.position.z);
+                    Quaternion rot = Quaternion.Euler(-90, 0, 0);
+                    GameObject instance = Instantiate(fb_prefab, pos, rot);
+                    fb_Instances.Add(instance);
+                }
+            }
+        }
+    }
+
+    public void FeedbackAttackSetup(GameObject fb_prefab)
+    {
+        GameManager gM = FindObjectOfType<GameManager>();
+
+        if (!gM.isMulti)
+        {
+            foreach (var target in FindObjectsOfType<EnemyBase>())
+            {
+                Vector3 pos = new Vector3(target.transform.position.x, target.transform.position.y + 3.2f, target.transform.position.z);
+                Quaternion rot = Quaternion.Euler(-90, 0, 0);
+                GameObject instance = Instantiate(fb_prefab, pos, rot);
+                fb_Instances.Add(instance);
+            }
+        }
+        else
+        {
+            foreach (var target in FindObjectsOfType<PlayerController>())
+            {
+                if (target.gameObject != this.gameObject)
+                {
+                    Vector3 pos = new Vector3(target.transform.position.x, target.transform.position.y + 3.2f, target.transform.position.z);
+                    Quaternion rot = Quaternion.Euler(-90, 0, 0);
+                    GameObject instance = Instantiate(fb_prefab, pos, rot);
+                    fb_Instances.Add(instance);
+                }
+            }
+        }
+    }
+
+    public void FeedbackPlaneSetup(GameObject fb_prefab)
+    {
+        foreach (var box in FindObjectsOfType<BoxCollider>())
+        {
+            if (box.gameObject.layer == 3)
+            {
+                Vector3 pos = new Vector3(box.transform.position.x, 0.26f, box.transform.position.z);
+                Quaternion rot = Quaternion.Euler(0, 0, 0);
+                GameObject instance = Instantiate(fb_prefab, pos, rot);
+                fb_Instances.Add(instance);
+            }
+        }
+    }
+
+    public void DeleteFeedbacks()
+    {
+        foreach (GameObject instance in fb_Instances)
+        {
+            Destroy(instance);
+        }
+        fb_Instances.Clear();
     }
 
     /// <summary>
