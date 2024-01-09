@@ -33,8 +33,11 @@ public class PlayerMotor : MonoBehaviour
         // Set ref(s)
         playerController = gameObject.GetComponent<PlayerController>();
 
-        if (FindObjectOfType<GameManager>().isMulti)
-            FeedbackActionsReset();
+        if (FindObjectOfType<GameManager>())
+        {
+            if (FindObjectOfType<GameManager>().isMulti)
+                FeedbackActionsReset();
+        }
     }
 
     public void Move(Vector3 dir)
@@ -102,8 +105,11 @@ public class PlayerMotor : MonoBehaviour
     {
         multi_movePerTurn = 0;
 
-        if (FindObjectOfType<GameManager>().isMulti)
-            FeedbackActionsReset();
+        if (FindObjectOfType<GameManager>())
+        {
+            if (FindObjectOfType<GameManager>().isMulti)
+                FeedbackActionsReset();
+        }
     }
 
     private void FeedbackActionsDecrease()

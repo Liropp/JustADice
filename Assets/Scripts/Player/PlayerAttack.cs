@@ -449,7 +449,7 @@ public class PlayerAttack : MonoBehaviour
 
                 if (!isDistantAttack && !canHeal && !canTeleport)
                 {
-                    FeedbackArrowSetup(fb_attack);
+                    FeedbackAttackSetup(fb_attack);
                 }
 
                 if (canTeleport)
@@ -990,10 +990,14 @@ public class PlayerAttack : MonoBehaviour
         {
             foreach (var target in FindObjectsOfType<EnemyBase>())
             {
-                Vector3 pos = new Vector3(target.transform.position.x, target.transform.position.y + 3.2f, target.transform.position.z);
-                Quaternion rot = Quaternion.Euler(-90, 0, 0);
-                GameObject instance = Instantiate(fb_prefab, pos, rot);
-                fb_Instances.Add(instance);
+                float dist = Mathf.Round(Vector3.Distance(target.transform.position, transform.position));
+                if (dist <= 1)
+                {
+                    Vector3 pos = new Vector3(target.transform.position.x, target.transform.position.y + 2.75f, target.transform.position.z);
+                    Quaternion rot = Quaternion.Euler(-90, 0, 0);
+                    GameObject instance = Instantiate(fb_prefab, pos, rot);
+                    fb_Instances.Add(instance);
+                }
             }
         }
         else
@@ -1002,7 +1006,7 @@ public class PlayerAttack : MonoBehaviour
             {
                 if (target.gameObject != this.gameObject)
                 {
-                    Vector3 pos = new Vector3(target.transform.position.x, target.transform.position.y + 3.2f, target.transform.position.z);
+                    Vector3 pos = new Vector3(target.transform.position.x, target.transform.position.y + 2f, target.transform.position.z);
                     Quaternion rot = Quaternion.Euler(-90, 0, 0);
                     GameObject instance = Instantiate(fb_prefab, pos, rot);
                     fb_Instances.Add(instance);

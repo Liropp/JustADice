@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
     [Header("Solo")]
     public bool isSolo = false;
     public bool canRevive = false;
+    private int currAdCount = 0;
+    private int adMaxPerTurn = 1;
 
     private void Start()
     {
@@ -289,6 +291,11 @@ public class GameManager : MonoBehaviour
         if (!endUI.activeInHierarchy)
         {
             FindObjectOfType<AudioManager>().Play("Lose");
+            currAdCount++;
+
+            if(currAdCount <= adMaxPerTurn)
+            FindObjectOfType<AdsInitializer>().OnInitializationComplete();
+
             endUI.SetActive(true);
         }
 
@@ -320,7 +327,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void Revive()
     {
-        player.GetComponent<PlayerHP>().Heal(100);
+        player.GetComponent<PlayerHP>().Heal(25);
         player.SetActive(true);
         curIndexTurn = 0;
         endUI.SetActive(false);
