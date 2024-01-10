@@ -3489,7 +3489,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _androidGameId: 5516297
   _iOSGameId: 5516296
-  _testMode: 1
+  _testMode: 0
   rewardedAdsButton: {fileID: 1653891119}
 --- !u!4 &1175642067
 Transform:
@@ -3930,6 +3930,7 @@ MonoBehaviour:
   endTxt: {fileID: 2121689112}
   isSolo: 1
   canRevive: 1
+  rewardBtn: {fileID: 1653891114}
 --- !u!4 &1292559766
 Transform:
   m_ObjectHideFlags: 0

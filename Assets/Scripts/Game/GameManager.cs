@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     public bool canRevive = false;
     private int currAdCount = 0;
     private int adMaxPerTurn = 1;
+    [SerializeField] private GameObject rewardBtn;
 
     private void Start()
     {
@@ -272,10 +273,11 @@ public class GameManager : MonoBehaviour
         if (!isSolo)
         {
             winBtn.GetComponent<Button>().interactable = true;
+            rewardBtn.GetComponent<Button>().interactable = false;
         }
         else
         {
-            winBtn.GetComponent<Button>().interactable = false;
+            rewardBtn.GetComponent<Button>().interactable = false;
         }
         endTxt.text = "Player win!";
 
