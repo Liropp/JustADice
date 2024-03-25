@@ -413,8 +413,8 @@ public class PlayerAttack : MonoBehaviour
     /// </summary>
     public void Attack()
     {
-        Debug.Log("spl_selected.canUseSpell : " + spl_selected.canUseSpell);
-        Debug.Log("spl_selected.curUseSpellCooldown : " + spl_selected.curUseSpellCooldown);
+        //Debug.Log("spl_selected.canUseSpell : " + spl_selected.canUseSpell);
+        //Debug.Log("spl_selected.curUseSpellCooldown : " + spl_selected.curUseSpellCooldown);
 
         //Debug.Log("spl_selected.canUseSpell " + spl_selected.canUseSpell);
         //Debug.Log("spl_selected.enable " + spl_selected.enable);
@@ -1036,6 +1036,23 @@ public class PlayerAttack : MonoBehaviour
             Destroy(instance);
         }
         fb_Instances.Clear();
+    }
+
+    public bool CanPlayerUseSpell()
+    {
+        //Debug.Log("spl_selected.canUseSpell " + spl_selected.canUseSpell);
+        //Debug.Log("spl_selected.enable " + spl_selected.enable);
+        //Debug.Log("attackBtn.activeInHierarchy " + attackBtn.activeInHierarchy);
+        if (!spl_selected.enable)
+        {
+            return false;
+        }
+        else if (!spl_selected.canUseSpell && attackBtn.activeInHierarchy)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>

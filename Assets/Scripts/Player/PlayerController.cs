@@ -38,6 +38,11 @@ public class PlayerController : MonoBehaviour
             gameObject.SetActive(false);
             //Debug.Log("is falling");
         }
+
+        if (!CanUseMoveInputs() && GetcanMove())
+        {
+            Invoke("Stuck", 3f);
+        }
     }
 
     /// <summary>
@@ -246,5 +251,120 @@ public class PlayerController : MonoBehaviour
         {
             return "null";
         }
+    }
+
+    private bool isForwardVoid;
+    private bool isBackwardVoid;
+    private bool isRightVoid;
+    private bool isLeftVoid;
+    private bool CanUseMoveInputs()
+    {
+        RaycastHit hit;
+        // forward
+        if (!Physics.Raycast(transform.position + transform.forward, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
+        {
+            isForwardVoid = true;
+        }
+        else
+        {
+            isForwardVoid = false;
+        }
+        // backward
+        if (!Physics.Raycast(transform.position - transform.forward, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
+        {
+            isBackwardVoid = true;
+        }
+        else
+        {
+            isBackwardVoid = false;
+        }
+        // right
+        if (!Physics.Raycast(transform.position + transform.right, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
+        {
+            isRightVoid = true;
+        }
+        else
+        {
+            isRightVoid = false;
+        }
+        // left
+        if (!Physics.Raycast(transform.position - transform.right, transform.TransformDirection(-Vector3.up), out hit, Mathf.Infinity, whatIsGround))
+        {
+            isLeftVoid = true;
+        }
+        else
+        {
+            isLeftVoid = false;
+        }
+
+        if (isForwardVoid && isBackwardVoid && isRightVoid && isLeftVoid)
+        {
+            return false;
+        }
+        else if (isBackwardVoid && isRightVoid && isLeftVoid)
+        {
+            RaycastHit hitPawn;
+            //Debug.DrawRay(transform.position, transform.forward*1, Color.red, 1f);
+            if(Physics.Raycast(transform.position, transform.forward, out hitPawn, 1, whatIsObstacle))
+            {
+                if (hitPawn.collider.gameObject.CompareTag("Enemy") && !gameObject.GetComponent<PlayerAttack>().CanPlayerUseSpell())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        else if (isForwardVoid && isRightVoid && isLeftVoid)
+        {
+            RaycastHit hitPawn;
+            if (Physics.Raycast(transform.position, -transform.forward, out hitPawn, 1, whatIsObstacle))
+            {
+                if (hitPawn.collider.gameObject.CompareTag("Enemy") && !gameObject.GetComponent<PlayerAttack>().CanPlayerUseSpell())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        else if (isForwardVoid && isBackwardVoid && isLeftVoid)
+        {
+            RaycastHit hitPawn;
+            if (Physics.Raycast(transform.position, transform.right, out hitPawn, 1, whatIsObstacle))
+            {
+                if (hitPawn.collider.gameObject.CompareTag("Enemy") && !gameObject.GetComponent<PlayerAttack>().CanPlayerUseSpell())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        else if (isForwardVoid && isBackwardVoid && isRightVoid)
+        {
+            RaycastHit hitPawn;
+            if (Physics.Raycast(transform.position, -transform.right, out hitPawn, 1, whatIsObstacle))
+            {
+                if (hitPawn.collider.gameObject.CompareTag("Enemy") && !gameObject.GetComponent<PlayerAttack>().CanPlayerUseSpell())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        //Debug.Log("devant :" + isForwardVoid);
+        //Debug.Log("derrière :" + isBackwardVoid);
+        //Debug.Log("à droite :" + isRightVoid);
+        //Debug.Log("à gauche :" + isLeftVoid);
+
+        return true;
+    }
+
+    private void Stuck()
+    {
+        gameObject.SetActive(false);
     }
 }

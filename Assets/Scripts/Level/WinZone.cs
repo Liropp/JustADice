@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class WinZone : MonoBehaviour
 {
+    [SerializeField] private float waitTimeTP = 0.75f;
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            StartCoroutine(CallPlayerWon(0.75f));
+            StartCoroutine(CallPlayerWon(waitTimeTP));
         }
     }
 

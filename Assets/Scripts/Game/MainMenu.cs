@@ -8,6 +8,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject levelsMenu;
     [SerializeField] private GameObject versusMenu;
     [SerializeField] private GameObject soloMenu;
+    [SerializeField] private GameObject creditMenu;
 
     private void Start()
     {
@@ -21,6 +22,7 @@ public class MainMenu : MonoBehaviour
             levelsMenu.SetActive(false);
             versusMenu.SetActive(false);
             soloMenu.SetActive(false);
+            creditMenu.SetActive(false);
         }
     }
 
@@ -29,6 +31,7 @@ public class MainMenu : MonoBehaviour
         mainMenu.SetActive(false);
         versusMenu.SetActive(false);
         soloMenu.SetActive(false);
+        creditMenu.SetActive(false);
         levelsMenu.SetActive(true);
     }
 
@@ -39,6 +42,7 @@ public class MainMenu : MonoBehaviour
         mainMenu.SetActive(false);
         levelsMenu.SetActive(false);
         soloMenu.SetActive(false);
+        creditMenu.SetActive(false);
         versusMenu.SetActive(true);
     }
 
@@ -49,7 +53,17 @@ public class MainMenu : MonoBehaviour
         mainMenu.SetActive(false);
         levelsMenu.SetActive(false);
         versusMenu.SetActive(false);
+        creditMenu.SetActive(false);
         soloMenu.SetActive(true);
+    }
+
+    public void Credits()
+    {
+        mainMenu.SetActive(false);
+        versusMenu.SetActive(false);
+        soloMenu.SetActive(false);
+        levelsMenu.SetActive(false);
+        creditMenu.SetActive(true);
     }
 
     public void Quit()
